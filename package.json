@@ -1,0 +1,32 @@
+{
+  "name": "chrome-sync",
+  "version": "0.1.0",
+  "description": "Chrome extension to access list of tabs that you have synced from Chrome",
+  "devDependencies": {
+    "babelify": "^6.1.2",
+    "brfs": "^1.4.0",
+    "browserify": "^10.2.4",
+    "gulp": "^3.9.0",
+    "gulp-crx": "PavelVanecek/gulp-crx",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "scripts": {
+    "build": "gulp --harmony"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "chrome",
+    "extension",
+    "tabs",
+    "sync"
+  ],
+  "author": "Matthew Gertner <matthew@salsitasoft.com>",
+  "license": "MIT",
+  "dependencies": {
+    "protocol-buffers": "^3.1.2",
+    "request": "^2.58.0"
+  }
+}
