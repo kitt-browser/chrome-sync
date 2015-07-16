@@ -1,6 +1,7 @@
 let request = require('request');
 let config = require('./config');
-let protobuf = require('protocol-buffers');
+let ProtoBuf = require("protobufjs");
+
 let fs = require('fs');
 
 function getAPITokens(authorizationCode, cb) {
@@ -12,7 +13,7 @@ function getAPITokens(authorizationCode, cb) {
       client_secret: config.clientSecret,
       redirect_uri: config.redirectUri,
       grant_type: 'authorization_code'
-    },
+    }
   },
   (err, response, body) => {
     if (!err) {
@@ -22,9 +23,10 @@ function getAPITokens(authorizationCode, cb) {
 }
 
 function getOpenTabs(cb) {
-  let sync = protobuf(fs.readFileSync('./protocol/sync.proto'));
+
 }
 
+getOpenTabs();
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch(message.type) {
     case 'setAuthorizationCode':
@@ -35,3 +37,5 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       break;
   }
 });
+
+

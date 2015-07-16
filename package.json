@@ -2,6 +2,9 @@
   "name": "chrome-sync",
   "version": "0.1.0",
   "description": "Chrome extension to access list of tabs that you have synced from Chrome",
+  "dependencies": {
+    "protobufjs": ""
+  },
   "devDependencies": {
     "babelify": "^6.1.2",
     "brfs": "^1.4.0",
