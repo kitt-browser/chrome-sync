@@ -1,4 +1,4 @@
-;(function() {
+function run() {
   let querystring = require('querystring');
   let config = require('./config');
 
@@ -13,21 +13,10 @@
       });
       chrome.tabs.create({ url: url });
       window.close();
-    }
-    else {
-      console.log('lll');
+    } else {
+      document.body.innerHTML = JSON.stringify(items);
     }
   });
+}
 
-  function test(i) {
-    return 'hahaha' + i;
-  }
-
-  setTimeout(function() {
-    //alert(document);
-    //alert(document.body);
-    //alert(document.body.innerHTML);
-    document.body.innerHTML = 'hihihi2';
-  },1000);
-
-})();
+document.addEventListener("DOMContentLoaded", run);

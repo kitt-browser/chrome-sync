@@ -2,8 +2,6 @@ let request = require('request');
 let config = require('./config');
 let ProtoBuf = require("protobufjs");
 
-let fs = require('fs');
-
 function getAPITokens(authorizationCode, cb) {
   request.post({
     url: 'https://www.googleapis.com/oauth2/v3/token',
@@ -23,10 +21,8 @@ function getAPITokens(authorizationCode, cb) {
 }
 
 function getOpenTabs(cb) {
-
 }
 
-getOpenTabs();
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch(message.type) {
     case 'setAuthorizationCode':
