@@ -43,8 +43,8 @@ module.exports = {
     test.done();
   },
 
-  ignoresSpacesWhenNecessary: function(test) {
-    var spanned = s('React/API', 'React API', '<b>', '</b>');
+  ignoresSpacesWhenNecessary: function(test) { // how to treat multiple word needles? split them ? s('ReactAPI', 'React API', '<b>', '</b>');
+    var spanned = s('React/API', 'React API', '<b>', '</b>'); //  s('React/API', 'React AP I', '<b>', '</b>'); //  s('React/API', 'React AP', '<b>', '</b>');
     test.equal(spanned, '<b>React</b>/<b>API</b>');
     test.done();
   },

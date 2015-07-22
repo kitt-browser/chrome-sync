@@ -2,11 +2,14 @@
 
 let gulp = require('gulp');
 let browserify = require('browserify');
+let babel = require('gulp-babel');
 let babelify = require('babelify');
 let brfs = require('brfs');
 let source = require('vinyl-source-stream');
 let fs = require('fs');
 let crx = require('gulp-crx');
+let mocha = require('gulp-mocha');
+let cat = require('gulp-cat');
 
 function createBrowserifyBundle(srcPath) {
   return () => {
@@ -23,6 +26,15 @@ function createBrowserifyBundle(srcPath) {
     .pipe(gulp.dest('./build'));
   };
 }
+
+gulp.task('mochaTest', () => {
+  return gulp.src('./test/**/*.spec.js')
+    //.pipe(createBrowserifyBundle)
+
+    //.pipe(babel())
+    //.pipe(cat())
+    .pipe(mocha({reporter: 'spec'}));
+});
 
 gulp.task('background', createBrowserifyBundle('js/background.js'));
 gulp.task('popup', createBrowserifyBundle('js/popup.js'));
@@ -48,7 +60,7 @@ gulp.task('copy', () => {
     .pipe(gulp.dest('./build'));
 });
 
-gulp.task('build', ['js', 'html', 'css', 'img', 'copy']);
+gulp.task('build', ['mochaTest', 'js', 'html', 'css', 'img', 'copy']);
 
 gulp.task('watch', () => {
   gulp.watch(['manifest.json', 'src/**'], ['build']);

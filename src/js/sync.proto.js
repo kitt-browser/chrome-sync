@@ -913,7 +913,7 @@ message GetUpdatesMessage {
     optional bool fetch_folders = 3 [default = true];
     optional EntitySpecifics requested_types = 4;
     optional int32 batch_size = 5;
-    optional DataTypeProgressMarker from_progress_marker = 6;
+    repeated DataTypeProgressMarker from_progress_marker = 6;
     optional bool streaming = 7 [default = false];
     optional bool need_encryption_key = 8 [default = false];
     optional bool create_mobile_bookmarks_folder = 1000 [default = false];
