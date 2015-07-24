@@ -11,8 +11,14 @@ let root = builder.build('sync_pb');
 
 
 describe('module for syncRequest', function () {
+  it('should sendsyncrequest', function() {
+    //syncRequest.SendSyncRequest(db);
+
+    console.log('hhi');
+  });
+
   it('should verify syncrequest sender', function () {
-    console.log(root.ClientToServerMessage.decode(syncRequest.BuildSyncRequest(db)));
+    //console.log(root.ClientToServerMessage.decode(syncRequest.BuildSyncRequest(db)));
 
 //    let b = new ByteBuffer();
 //    b.writeInt(2.5);

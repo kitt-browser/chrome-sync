@@ -1,4 +1,5 @@
 'use strict';
+let request = require('request');
 let ProtoBuf = require("protobufjs");
 let syncProto = require('./sync.proto');
 let db = require('./db');
@@ -43,7 +44,7 @@ function BuildSyncRequest(db) {
   }
 
   let request = new root.ClientToServerMessage();
-  request.share = '__DUMMY'; // no idea for myRequest.SetShare(_syncOptions.User);
+  request.share = ''; // no idea for myRequest.SetShare(_syncOptions.User);
   request.message_contents = 'GET_UPDATES';
 
   let callerInfo = new root.GetUpdatesCallerInfo;
@@ -74,10 +75,46 @@ function BuildSyncRequest(db) {
   request.get_updates = getUpdatesMessage;
   request.client_status = new root.ClientStatus();
 
-  return request.toArrayBuffer();
+  //return request.toArrayBuffer();
+  console.log('------------', request.toArrayBuffer());
+  return request.toBuffer();
 }
 
+function readSyncRequest(ClientToServerResponseItem) {
+   let decoded = root.ClientToServerResponse.decode(ClientToServerResponseItem);
+   console.log(decoded);
+}
+
+function SendSyncRequestWithAccessToken(accessToken, db) {
+  let syncRequest = BuildSyncRequest(db);
+
+  request.get({
+    url: /*'http://localhost:1234'*/'https://clients4.google.com/chrome-sync/',
+    headers: {
+      'Content-Type': 'application/octet-stream',
+      'Bearer': accessToken
+    },
+    encoding: null, //  if you expect binary data
+    body: syncRequest
+  }, (error, response, body) => {
+    console.log(error, body);
+    if (!error) {
+      readSyncRequest(body);
+    }
+  });
+
+}
+
+function SendSyncRequest(db) {
+  chrome.storage.local.get('tokens', function(container) {
+    let accessToken = container.tokens.access_token;
+    SendSyncRequestWithAccessToken(accessToken, db);
+  });
+}
 module.exports = {
+  SendSyncRequestWithAccessToken: SendSyncRequestWithAccessToken,
   BuildSyncRequest: BuildSyncRequest,
+  SendSyncRequest: SendSyncRequest,
+  db:db,
   sync: root
 };

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Chrome extension to access list of tabs that you have synced from Chrome",
   "dependencies": {
+    "jquery": "^2.1.4",
     "protocol-buffers": "^3.1.2",
     "request": "^2.58.0"
   },

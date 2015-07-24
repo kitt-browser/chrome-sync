@@ -17,7 +17,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://accounts.google.com/o/oauth2/approval?*"],
+      "matches": ["<all_urls>","https://accounts.google.com/o/oauth2/approval?*"],
       "js": ["js/content.js"]
     }
   ],
