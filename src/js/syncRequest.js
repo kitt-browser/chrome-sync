@@ -44,7 +44,7 @@ function BuildSyncRequest(db) {
   }
 
   let request = new root.ClientToServerMessage();
-  request.share = ''; // no idea for myRequest.SetShare(_syncOptions.User);
+  request.share = db.getUserShare();
   request.message_contents = 'GET_UPDATES';
 
   let callerInfo = new root.GetUpdatesCallerInfo;
@@ -75,24 +75,26 @@ function BuildSyncRequest(db) {
   request.get_updates = getUpdatesMessage;
   request.client_status = new root.ClientStatus();
 
-  //return request.toArrayBuffer();
-  console.log('------------', request.toArrayBuffer());
+  console.log('sss',JSON.stringify(root.ClientToServerMessage.decode(request.encode())));
+  //console.log('------------', request.toArrayBuffer());
   return request.toBuffer();
 }
 
 function readSyncRequest(ClientToServerResponseItem) {
-   let decoded = root.ClientToServerResponse.decode(ClientToServerResponseItem);
-   console.log(decoded);
+  console.log(ClientToServerResponseItem.toString());
+  //let decoded = root.ClientToServerMessage.decode(ClientToServerResponseItem);
+  //console.log(decoded);
 }
 
 function SendSyncRequestWithAccessToken(accessToken, db) {
   let syncRequest = BuildSyncRequest(db);
-
-  request.get({
-    url: /*'http://localhost:1234'*/'https://clients4.google.com/chrome-sync/',
+  console.log(accessToken);
+  request.post({
+    url: /*'http://localhost:1234'*/'https://clients4.google.com/chrome-sync',
     headers: {
       'Content-Type': 'application/octet-stream',
-      'Bearer': accessToken
+      //'Bearer': accessToken,
+      'Authorization': 'GoogleLogin auth='+ accessToken
     },
     encoding: null, //  if you expect binary data
     body: syncRequest

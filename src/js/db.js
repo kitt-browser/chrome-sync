@@ -6,6 +6,7 @@
 let ProtoBuf = require('protobufjs');
 
 let db = {
+  getUserShare: () => 'tomasnovella@gmail.com',
   getSyncState: function() {
     return { // part of ClientToServerMessage
       server_chips: null,
