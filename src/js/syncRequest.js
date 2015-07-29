@@ -3,7 +3,7 @@ let request = require('request');
 let ProtoBuf = require("protobufjs");
 let syncProto = require('./sync.proto');
 let db = require('./db');
-
+let config = require('./config');
 let builder = ProtoBuf.loadProto(syncProto);
 let root = builder.build('sync_pb');
 
@@ -90,11 +90,17 @@ function SendSyncRequestWithAccessToken(accessToken, db) {
   let syncRequest = BuildSyncRequest(db);
   console.log(accessToken);
   request.post({
-    url: /*'http://localhost:1234'*/'https://clients4.google.com/chrome-sync',
+    url: /*'http://localhost:1234/chrome-sync/command',//*/'https://clients4.google.com/chrome-sync/command',
+    qs: {
+      'client': 'Google Chrome',
+      //'client_id': config.clientId
+    },
     headers: {
       'Content-Type': 'application/octet-stream',
       //'Bearer': accessToken,
-      'Authorization': 'GoogleLogin auth='+ accessToken
+      //'Authorization': 'GoogleLogin auth='+ accessToken,
+      'Authorization': 'Bearer '+ accessToken,
+      //'token': accessToken
     },
     encoding: null, //  if you expect binary data
     body: syncRequest
