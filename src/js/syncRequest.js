@@ -81,9 +81,12 @@ function BuildSyncRequest(db) {
 }
 
 function readSyncRequest(ClientToServerResponseItem) {
+  console.log('******read (toString)******');
   console.log(ClientToServerResponseItem.toString());
+  console.log('****** decode ****');
   //let decoded = root.ClientToServerMessage.decode(ClientToServerResponseItem);
-  //console.log(decoded);
+  let decoded = root.ClientToServerResponse.decode(ClientToServerResponseItem);
+  console.log(decoded);
 }
 
 function SendSyncRequestWithAccessToken(accessToken, db) {
@@ -93,7 +96,7 @@ function SendSyncRequestWithAccessToken(accessToken, db) {
     url: /*'http://localhost:1234/chrome-sync/command',//*/'https://clients4.google.com/chrome-sync/command',
     qs: {
       'client': 'Google Chrome',
-      //'client_id': config.clientId
+      'client_id': config.clientId
     },
     headers: {
       'Content-Type': 'application/octet-stream',
