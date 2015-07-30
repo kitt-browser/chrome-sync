@@ -77,7 +77,7 @@ message AppSpecifics {
     optional string bookmark_app_url = 6;
     optional string bookmark_app_description = 7;
     optional string bookmark_app_icon_color = 8;
-    optional LinkedAppIconInfo linked_app_icons = 9;
+    repeated LinkedAppIconInfo linked_app_icons = 9;
 
     enum LaunchType {
         PINNED = 0;
@@ -99,13 +99,13 @@ message AttachmentMetadataRecord {
 }
 
 message AttachmentMetadata {
-    optional AttachmentMetadataRecord record = 1;
+    repeated AttachmentMetadataRecord record = 1;
 }
 
 message ArticleSpecifics {
     optional string entry_id = 1;
     optional string title = 2;
-    optional ArticlePage pages = 3;
+    repeated ArticlePage pages = 3;
     optional ArticleAttachments attachments = 4;
 }
 
@@ -122,11 +122,11 @@ message AutofillProfileSpecifics {
     optional string origin = 16;
     optional int64 use_count = 22;
     optional int64 use_date = 23;
-    optional string name_first = 2;
-    optional string name_middle = 3;
-    optional string name_last = 4;
-    optional string name_full = 21;
-    optional string email_address = 5;
+    repeated string name_first = 2;
+    repeated string name_middle = 3;
+    repeated string name_last = 4;
+    repeated string name_full = 21;
+    repeated string email_address = 5;
     optional string company_name = 6;
     optional string address_home_line1 = 7;
     optional string address_home_line2 = 8;
@@ -138,7 +138,7 @@ message AutofillProfileSpecifics {
     optional string address_home_sorting_code = 18;
     optional string address_home_dependent_locality = 19;
     optional string address_home_language_code = 20;
-    optional string phone_home_whole_number = 13;
+    repeated string phone_home_whole_number = 13;
     optional string label = 1 [deprecated = true];
     optional string phone_fax_whole_number = 14 [deprecated = true];
 }
@@ -146,7 +146,7 @@ message AutofillProfileSpecifics {
 message AutofillSpecifics {
     optional string name = 1;
     optional string value = 2;
-    optional int64 usage_timestamp = 3;
+    repeated int64 usage_timestamp = 3;
     optional AutofillProfileSpecifics profile = 4;
 }
 
@@ -181,7 +181,7 @@ message WalletPostalAddress {
     optional string id = 1;
     optional string recipient_name = 12;
     optional string company_name = 2;
-    optional string street_address = 3;
+    repeated string street_address = 3;
     optional string address_1 = 4;
     optional string address_2 = 5;
     optional string address_3 = 6;
@@ -229,7 +229,7 @@ message BookmarkSpecifics {
     optional string title = 3;
     optional int64 creation_time_us = 4;
     optional string icon_url = 5;
-    optional MetaInfo meta_info = 6;
+    repeated MetaInfo meta_info = 6;
 }
 
 message CustomNudgeDelay {
@@ -245,7 +245,7 @@ message ClientCommand {
     optional int32 throttle_delay_seconds = 5;
     optional int32 client_invalidation_hint_buffer_size = 6;
     optional int32 gu_retry_delay_seconds = 7;
-    optional CustomNudgeDelay custom_nudge_delays = 8;
+    repeated CustomNudgeDelay custom_nudge_delays = 8;
 }
 
 message GetUpdatesCallerInfo {
@@ -361,7 +361,7 @@ message TypeHint {
 
 message SourceInfo {
     optional GetUpdatesCallerInfo.GetUpdatesSource source = 1;
-    optional TypeHint type_hint = 2;
+    repeated TypeHint type_hint = 2;
 }
 
 message SyncCycleCompletedEventInfo {
@@ -374,7 +374,7 @@ message SyncCycleCompletedEventInfo {
     optional int32 num_updates_downloaded = 8;
     optional int32 num_reflected_updates_downloaded = 9;
     optional GetUpdatesCallerInfo caller_info = 10;
-    optional SourceInfo source_info = 11;
+    repeated SourceInfo source_info = 11;
 }
 
 message DatatypeAssociationStats {
@@ -397,20 +397,20 @@ message DatatypeAssociationStats {
     optional int64 association_wait_time_for_high_priority_us = 16;
     optional int64 association_wait_time_for_same_priority_us = 14;
     optional int64 association_time_us = 17;
-    optional int32 high_priority_type_configured_before = 18;
-    optional int32 same_priority_type_configured_before = 19;
+    repeated int32 high_priority_type_configured_before = 18;
+    repeated int32 same_priority_type_configured_before = 19;
 }
 
 message DebugEventInfo {
     optional SyncEnums.SingletonDebugEventType singleton_event = 1;
     optional SyncCycleCompletedEventInfo sync_cycle_completed_event_info = 2;
     optional int32 nudging_datatype = 3;
-    optional int32 datatypes_notified_from_server = 4;
+    repeated int32 datatypes_notified_from_server = 4;
     optional DatatypeAssociationStats datatype_association_stats = 5;
 }
 
 message DebugInfo {
-    optional DebugEventInfo events = 1;
+    repeated DebugEventInfo events = 1;
     optional bool cryptographer_ready = 2;
     optional bool cryptographer_has_pending_keys = 3;
     optional bool events_dropped = 4;
@@ -511,7 +511,7 @@ message HistoryDeleteDirectiveSpecifics {
 }
 
 message GlobalIdDirective {
-    optional int64 global_id = 1;
+    repeated int64 global_id = 1;
     optional int64 start_time_usec = 2;
     optional int64 end_time_usec = 3;
 }
@@ -529,7 +529,7 @@ message NigoriKey {
 }
 
 message NigoriKeyBag {
-    optional NigoriKey key = 2;
+    repeated NigoriKey key = 2;
 }
 
 message NigoriSpecifics {
@@ -647,7 +647,7 @@ message SearchEngineSpecifics {
     optional string instant_url = 15;
     optional int64 last_modified = 17;
     optional string sync_guid = 18;
-    optional string alternate_urls = 19;
+    repeated string alternate_urls = 19;
     optional string search_terms_replacement_key = 20;
     optional string image_url = 21;
     optional string search_url_post_params = 22;
@@ -665,7 +665,7 @@ message SessionSpecifics {
 }
 
 message SessionHeader {
-    optional SessionWindow window = 2;
+    repeated SessionWindow window = 2;
     optional string client_name = 3;
     optional SyncEnums.DeviceType device_type = 4;
 }
@@ -674,7 +674,7 @@ message SessionWindow {
     optional int32 window_id = 1;
     optional int32 selected_tab_index = 2 [default = -1];
     optional BrowserType browser_type = 3 [default = TYPE_TABBED];
-    optional int32 tab = 4;
+    repeated int32 tab = 4;
 
     enum BrowserType {
         TYPE_TABBED = 1;
@@ -689,11 +689,11 @@ message SessionTab {
     optional int32 current_navigation_index = 4 [default = -1];
     optional bool pinned = 5 [default = false];
     optional string extension_app_id = 6;
-    optional TabNavigation navigation = 7;
+    repeated TabNavigation navigation = 7;
     optional bytes favicon = 8;
     optional FaviconType favicon_type = 9;
     optional string favicon_source = 11;
-    optional uint64 variation_id = 12;
+    repeated uint64 variation_id = 12;
 
     enum FaviconType {
         TYPE_WEB_FAVICON = 1;
@@ -718,11 +718,11 @@ message TabNavigation {
     optional string search_terms = 16;
     optional string favicon_url = 17;
     optional BlockedState blocked_state = 18 [default = STATE_ALLOWED];
-    optional string content_pack_categories = 19;
+    repeated string content_pack_categories = 19;
     optional int32 http_status_code = 20;
     optional int32 obsolete_referrer_policy = 21 [default = 1];
     optional bool is_restored = 22;
-    optional NavigationRedirect navigation_redirect = 23;
+    repeated NavigationRedirect navigation_redirect = 23;
     optional string last_navigation_redirect_url = 24;
     optional int32 correct_referrer_policy = 25 [default = 1];
 
@@ -846,7 +846,7 @@ message SyncEntity {
     optional string client_defined_unique_tag = 23;
     optional bytes ordinal_in_parent = 24;
     optional UniquePosition unique_position = 25;
-    optional AttachmentIdProto attachment_id = 26;
+    repeated AttachmentIdProto attachment_id = 26;
 
     message BookmarkData {
         required bool bookmark_folder = 12;
@@ -861,20 +861,20 @@ message ChromiumExtensionsActivity {
 }
 
 message ClientConfigParams {
-    optional int32 enabled_type_ids = 1;
+    repeated int32 enabled_type_ids = 1;
     optional bool tabs_datatype_enabled = 2;
 }
 
 message CommitMessage {
-    optional SyncEntity entries = 1;
+    repeated SyncEntity entries = 1;
     optional string cache_guid = 2;
-    optional ChromiumExtensionsActivity extensions_activity = 3;
+    repeated ChromiumExtensionsActivity extensions_activity = 3;
     optional ClientConfigParams config_params = 4;
-    optional DataTypeContext client_contexts = 5;
+    repeated DataTypeContext client_contexts = 5;
 }
 
 message GetUpdateTriggers {
-    optional string notification_hint = 1;
+    repeated string notification_hint = 1;
     optional bool client_dropped_hints = 2;
     optional bool invalidations_out_of_sync = 3;
     optional int64 local_modification_nudges = 4;
@@ -919,7 +919,7 @@ message GetUpdatesMessage {
     optional bool create_mobile_bookmarks_folder = 1000 [default = false];
     optional SyncEnums.GetUpdatesOrigin get_updates_origin = 9;
     optional bool is_retry = 10 [default = false];
-    optional DataTypeContext client_contexts = 11;
+    repeated DataTypeContext client_contexts = 11;
 }
 
 message AuthenticateMessage {
@@ -1006,22 +1006,22 @@ message CommitResponse {
 }
 
 message GetUpdatesResponse {
-    optional SyncEntity entries = 1;
+    repeated SyncEntity entries = 1;
     optional int64 new_timestamp = 2;
     optional int64 deprecated_newest_timestamp = 3;
     optional int64 changes_remaining = 4;
-    optional DataTypeProgressMarker new_progress_marker = 5;
-    optional bytes encryption_keys = 6;
-    optional DataTypeContext context_mutations = 7;
+    repeated DataTypeProgressMarker new_progress_marker = 5;
+    repeated bytes encryption_keys = 6;
+    repeated DataTypeContext context_mutations = 7;
 }
 
 message GetUpdatesMetadataResponse {
     optional int64 changes_remaining = 1;
-    optional DataTypeProgressMarker new_progress_marker = 2;
+    repeated DataTypeProgressMarker new_progress_marker = 2;
 }
 
 message GetUpdatesStreamingResponse {
-    optional SyncEntity entries = 1;
+    repeated SyncEntity entries = 1;
 }
 
 message UserIdentification {
@@ -1054,7 +1054,7 @@ message ClientToServerResponse {
     optional DeprecatedMessage2 deprecated_field_9 = 9 [deprecated = true];
     optional GetUpdatesMetadataResponse stream_metadata = 10;
     optional GetUpdatesStreamingResponse stream_data = 11;
-    optional int32 migrated_data_type_id = 12;
+    repeated int32 migrated_data_type_id = 12;
     optional Error error = 13;
     optional ChipBag new_bag_of_chips = 14;
 
@@ -1063,7 +1063,7 @@ message ClientToServerResponse {
         optional string error_description = 2;
         optional string url = 3;
         optional SyncEnums.Action action = 4 [default = UNKNOWN_ACTION];
-        optional int32 error_data_type_ids = 5;
+        repeated int32 error_data_type_ids = 5;
     }
 }
 
