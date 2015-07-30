@@ -75,18 +75,30 @@ function BuildSyncRequest(db) {
   request.get_updates = getUpdatesMessage;
   request.client_status = new root.ClientStatus();
 
-  console.log('sss',JSON.stringify(root.ClientToServerMessage.decode(request.encode())));
+  //console.log('sss',JSON.stringify(root.ClientToServerMessage.decode(request.encode())));
   //console.log('------------', request.toArrayBuffer());
   return request.toBuffer();
 }
 
 function readSyncRequest(ClientToServerResponseItem) {
   console.log('******read (toString)******');
-  console.log(ClientToServerResponseItem.toString());
+  //console.log(ClientToServerResponseItem.toString());
   console.log('****** decode ****');
   //let decoded = root.ClientToServerMessage.decode(ClientToServerResponseItem);
   let decoded = root.ClientToServerResponse.decode(ClientToServerResponseItem);
-  console.log(decoded);
+  let entries = decoded.get_updates.entries;
+  entries.forEach( (val, key) => {
+    let tab =  val.specifics.session.tab;
+    if (tab) {
+      let navigation = tab.navigation;
+      let lastNavigation = navigation[navigation.length - 1];
+
+      console.log('tab!', key, lastNavigation.virtual_url);
+
+    }
+  });
+  console.log('****');
+  //console.log(decoded.get_updates.entries[0]);
 }
 
 function SendSyncRequestWithAccessToken(accessToken, db) {
@@ -100,10 +112,7 @@ function SendSyncRequestWithAccessToken(accessToken, db) {
     },
     headers: {
       'Content-Type': 'application/octet-stream',
-      //'Bearer': accessToken,
-      //'Authorization': 'GoogleLogin auth='+ accessToken,
-      'Authorization': 'Bearer '+ accessToken,
-      //'token': accessToken
+      'Authorization': 'Bearer '+ accessToken
     },
     encoding: null, //  if you expect binary data
     body: syncRequest
