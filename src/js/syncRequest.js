@@ -6,6 +6,7 @@ let db = require('./db');
 let config = require('./config');
 let builder = ProtoBuf.loadProto(syncProto);
 let root = builder.build('sync_pb');
+var Bufferr = require('buffer/').Buffer;
 
 var SyncFlags = {
   OPEN_TABS: 1,
@@ -77,33 +78,37 @@ function BuildSyncRequest(db) {
 
   //console.log('sss',JSON.stringify(root.ClientToServerMessage.decode(request.encode())));
   //console.log('------------', request.toArrayBuffer());
-  return request.toBuffer();
+  return request.toBuffer(); //node
 }
 
-function readSyncRequest(ClientToServerResponseItem) {
+function readSyncRequest(ClientToServerResponseItem, cb) {
   console.log('******read (toString)******');
   //console.log(ClientToServerResponseItem.toString());
   console.log('****** decode ****');
-  //let decoded = root.ClientToServerMessage.decode(ClientToServerResponseItem);
+  let openTabs = [];
   let decoded = root.ClientToServerResponse.decode(ClientToServerResponseItem);
   let entries = decoded.get_updates.entries;
   entries.forEach( (val, key) => {
     let tab =  val.specifics.session.tab;
     if (tab) {
       let navigation = tab.navigation;
-      let lastNavigation = navigation[navigation.length - 1];
+      let lastNavigation = navigation[navigation.length - 1]; // redirects + tab history
 
-      console.log('tab!', key, lastNavigation.virtual_url);
-
+      openTabs.push(lastNavigation.virtual_url);
     }
   });
-  console.log('****');
+  openTabs.reverse();
+  cb(openTabs);
   //console.log(decoded.get_updates.entries[0]);
 }
 
-function SendSyncRequestWithAccessToken(accessToken, db) {
-  let syncRequest = BuildSyncRequest(db);
-  console.log(accessToken);
+function SendSyncRequestWithAccessToken(accessToken, db, cb) {
+  let syncRequest = typeof window === 'undefined' ? BuildSyncRequest(db) // nodejs
+    : /* new Uint8Array(BuildSyncRequest(db)); //*/new Bufferr(BuildSyncRequest(db)); // browser
+
+
+  console.log('syncRequest', syncRequest, 'instanceof Uint8Array?', syncRequest instanceof Uint8Array,
+    'len:', syncRequest.length, 'TYPE:', syncRequest.toString());
   request.post({
     url: /*'http://localhost:1234/chrome-sync/command',//*/'https://clients4.google.com/chrome-sync/command',
     qs: {
@@ -117,20 +122,21 @@ function SendSyncRequestWithAccessToken(accessToken, db) {
     encoding: null, //  if you expect binary data
     body: syncRequest
   }, (error, response, body) => {
-    console.log(error, body);
+    console.log('error', error,'body', body);
     if (!error) {
-      readSyncRequest(body);
+      readSyncRequest(body, cb);
     }
   });
 
 }
 
-function SendSyncRequest(db) {
+function SendSyncRequest(cb) {
   chrome.storage.local.get('tokens', function(container) {
     let accessToken = container.tokens.access_token;
-    SendSyncRequestWithAccessToken(accessToken, db);
+    SendSyncRequestWithAccessToken(accessToken, db, cb);
   });
 }
+
 module.exports = {
   SendSyncRequestWithAccessToken: SendSyncRequestWithAccessToken,
   BuildSyncRequest: BuildSyncRequest,

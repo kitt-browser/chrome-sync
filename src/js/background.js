@@ -45,9 +45,6 @@ function refreshAccessToken() {
   });
 }
 
-function getOpenTabs(cb) {
-}
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch(message.type) {
     case 'setAuthorizationCode':
@@ -62,3 +59,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 refreshAccessToken();
 setInterval(refreshAccessToken, 1000* 3600);
+
+
+
+let s = require('./syncRequest');
+let accessToken = "ya29.wAEAByF8J34h1CLMJtSjjXV-D6BFH8b0yiEl0tZnIeVD04_8Cj_C_Z2fpv8_EvHq-bFE"
+s.SendSyncRequestWithAccessToken(accessToken, s.db, (tabs) => console.log('tabs', tabs));
+
