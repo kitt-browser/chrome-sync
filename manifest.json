@@ -9,7 +9,7 @@
     "128": "img/icon.png"
   },
   "permissions": [
-    "storage"
+    "storage", "http://localhost/"
   ],
   "background": {
     "scripts": ["js/background.js"],
