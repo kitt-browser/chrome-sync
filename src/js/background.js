@@ -62,7 +62,37 @@ setInterval(refreshAccessToken, 1000* 3600);
 
 
 
-let s = require('./syncRequest');
-let accessToken = "ya29.wAEAByF8J34h1CLMJtSjjXV-D6BFH8b0yiEl0tZnIeVD04_8Cj_C_Z2fpv8_EvHq-bFE"
-s.SendSyncRequestWithAccessToken(accessToken, s.db, (tabs) => console.log('tabs', tabs));
 
+console.log('hahaha');
+
+
+chrome.webRequest.onBeforeSendHeaders.addListener(
+  function(details) {
+    console.log('LOGNI SA VOLE', details.url, JSON.stringify(details.requestHeaders));
+    console.log('*****************');
+    details.requestHeaders.push({name:"dummyHeader",value:"1"});
+    return {requestHeaders: details.requestHeaders};
+  },
+  {urls: ["https://clients4.google.com/chrome-sync/command" ,"<all_urls>"]},
+  ["requestHeaders", "blocking"]
+);
+
+//chrome.webRequest.onBeforeSendHeaders.addListener(
+//  function(info) {
+//    console.log('HEADERS INFO');
+//    console.log(JSON.stringify(info));
+//    // Replace the User-Agent header
+//    var headers = info.requestHeaders;
+//    headers.forEach(function(header, i) {
+//      if (header.name.toLowerCase() == 'user-agent') {
+//        header.value = 'Spoofed UA';
+//      }
+//    });
+//    return {requestHeaders: headers};
+//  },
+//  {
+//    // Modify the headers for these pages
+//    urls: ["<all_urls>"]
+//  },
+//  ["blocking", "requestHeaders"]
+//);

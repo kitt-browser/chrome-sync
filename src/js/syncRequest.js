@@ -88,7 +88,7 @@ function BuildSyncRequest(db) {
 }
 
 function readSyncRequest(ClientToServerResponseItem, cb) {
-  if (inBrowser()) {
+  if (ClientToServerResponseItem.toString().length < 1000) { //todo
     console.log('******read (toString)******');
     console.log(ClientToServerResponseItem.toString());
   }
@@ -120,11 +120,12 @@ function SendSyncRequestWithAccessToken(accessToken, db, cb) {
 
       request.post({
         url: url,
-        //qs: {
-        //  'client': 'Google Chrome',
-        //  'client_id': config.clientId
-        //},
+        qs: {
+          'client': 'Google Chrome',
+          'client_id': config.clientId
+        },
         headers: {
+          //'cookie': "a=b",
           'Content-Type': 'application/octet-stream',
           'Authorization': 'Bearer '+ accessToken
         },
