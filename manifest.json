@@ -9,7 +9,7 @@
     "128": "img/icon.png"
   },
   "permissions": [
-    "storage", "<all_urls>", "webRequest", "webRequestBlocking"
+    "storage", "<all_urls>", "webRequest", "cookies"
   ],
   "background": {
     "scripts": ["js/background.js"],

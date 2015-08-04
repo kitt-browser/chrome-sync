@@ -16,6 +16,8 @@ let builder = ProtoBuf.loadProto(syncProto);
 let root = builder.build('sync_pb');
 var Bufferr = require('buffer/').Buffer;
 
+let url = /*'http://localhost/chrome-sync/command';//*/'https://clients4.google.com/chrome-sync/command';
+
 var SyncFlags = {
   OPEN_TABS: 1,
   BOOKMARKS: 2,
@@ -113,7 +115,6 @@ function readSyncRequest(ClientToServerResponseItem, cb) {
 function SendSyncRequestWithAccessToken(accessToken, db, cb) {
       //let syncRequest = new Bufferr(new Uint8Array(BuildSyncRequest(db)));
       let syncRequest = new Uint8Array(BuildSyncRequest(db));
-      let url = /*'http://localhost/chrome-sync/command';//*/'https://clients4.google.com/chrome-sync/command';
 
       console.log('syncRequest', syncRequest, 'instanceof Uint8Array?', syncRequest instanceof Uint8Array,
         'len:', syncRequest.length, 'TYPE:', syncRequest.toString());
@@ -153,5 +154,6 @@ module.exports = {
   BuildSyncRequest: BuildSyncRequest,
   SendSyncRequest: SendSyncRequest,
   db:db,
-  sync: root
+  sync: root,
+  url: url
 };

@@ -64,18 +64,18 @@ setInterval(refreshAccessToken, 1000* 3600);
 
 
 console.log('hahaha');
-
-
-chrome.webRequest.onBeforeSendHeaders.addListener(
-  function(details) {
-    console.log('LOGNI SA VOLE', details.url, JSON.stringify(details.requestHeaders));
-    console.log('*****************');
-    details.requestHeaders.push({name:"dummyHeader",value:"1"});
-    return {requestHeaders: details.requestHeaders};
-  },
-  {urls: ["https://clients4.google.com/chrome-sync/command" ,"<all_urls>"]},
-  ["requestHeaders", "blocking"]
-);
+//
+//
+//chrome.webRequest.onBeforeSendHeaders.addListener(
+//  function(details) {
+//    console.log('LOGNI SA VOLE', details.url, JSON.stringify(details.requestHeaders));
+//    console.log('*****************');
+//    details.requestHeaders.push({name:"dummyHeader",value:"1"});
+//    return {requestHeaders: details.requestHeaders};
+//  },
+//  {urls: ["https://clients4.google.com/chrome-sync/command" ,"<all_urls>"]},
+//  ["requestHeaders", "blocking"]
+//);
 
 //chrome.webRequest.onBeforeSendHeaders.addListener(
 //  function(info) {
