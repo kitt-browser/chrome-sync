@@ -1,6 +1,7 @@
 let querystring = require('querystring');
 let config = require('./config');
 let syncRequest = require('./syncRequest');
+let url = syncRequest.url;
 
 function authentificate() {
   let url = 'https://accounts.google.com/o/oauth2/auth' + '?' + querystring.stringify({
@@ -14,43 +15,67 @@ function authentificate() {
   window.close();
 }
 
-function printOpenTabs() {
-  document.body.innerHTML += '<br /><br />Open tabs: <br /><br />';
-
-  let url = syncRequest.url;
-  console.log(url);
-  chrome.cookies.getAll({url: url}, cookies => {
-    let savedCookies = cookies; // clone?
-    savedCookies.forEach(cookie =>
-      chrome.cookies.remove({url: url, name: cookie.name})
-    );
-
-    setTimeout(function(){}, 0); // flush code above
-
-    syncRequest.SendSyncRequest((tabs) => {
-      tabs.slice(0,5).forEach(tab => {
-        document.body.innerHTML += tab + '\n<br />';
-      });
-      savedCookies.forEach(cookie =>
-          chrome.cookies.set({
-            url: url,
-            name:cookie.name,
-            value: cookie.value,
-            domain: cookie.domain,
-            path:cookie.path,
-            secure: cookie.secure,
-            httpOnly: cookie.httpOnly,
-            expirationDate: cookie.expirationDate,
-            storeId: cookie.storeId
-          })
-      );
-
-    });
-
+function getAllCookiesPromise(obj) {
+  return new Promise(function(resolve, reject) {
+    chrome.cookies.getAll(obj, resolve);
   });
 }
 
-function run() {
+function deleteCookiesPromise(cookiesToDelete) {
+  let promisesPerCookie = cookiesToDelete.map( cookie => {
+    new Promise(function (resolve, reject) {
+      chrome.cookies.remove({url: url, name: cookie.name}, resolve);
+    })
+  });
+  return Promise.all(promisesPerCookie);
+}
+
+function sendSyncRequestPromise() {
+  return new Promise(function(resolve, reject) {
+    syncRequest.SendSyncRequest(resolve);
+  });
+}
+
+function restoreCookiesPromise(cookies) {
+  cookies.forEach(cookie =>
+    chrome.cookies.set({
+      url: url,
+      name:cookie.name,
+      value: cookie.value,
+      domain: cookie.domain,
+      path:cookie.path,
+      secure: cookie.secure,
+      httpOnly: cookie.httpOnly,
+      expirationDate: cookie.expirationDate,
+      storeId: cookie.storeId
+    })
+  );
+}
+
+
+
+function printOpenTabs() {
+  document.body.innerHTML += '<br /><br />Open tabs: <br /><br />';
+
+  console.log(url);
+
+  var deletedCookies;
+  getAllCookiesPromise({url:url})
+    .then(cookies => {
+      deletedCookies = cookies;
+      return cookies;
+    })
+    .then(deleteCookiesPromise)
+    .then(sendSyncRequestPromise)
+    .then(openTabs => {
+      openTabs.slice(0,5).forEach(tab => {
+        document.body.innerHTML += tab + '\n<br />';
+      });
+    })
+    .then(() => {restoreCookiesPromise(deletedCookies)} );
+}
+
+function main() {
   chrome.storage.local.get('tokens', (items) => {
     if (!items.tokens) {
       authentificate();
@@ -61,4 +86,4 @@ function run() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", run);
+document.addEventListener("DOMContentLoaded", main);
