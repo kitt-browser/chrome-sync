@@ -158,14 +158,24 @@ function SendSyncRequest(accessToken) {
 
 // UPDATE
 function BuildUpdateRequest(websiteUrl) {
-  let request = new root.ClientToServerMessage();
-  request.share = db.getUserShare();
-  request.message_contents = 'GET_UPDATES';
+  let request = new root.ClientToServerMessage({
+    share: db.getUserShare(),
+    message_contents: 'COMMIT',
+    commit: {
+      config_params: {
+        enabled_type_ids: [50119]
+      }
+    }
+  });
+  // todo add rest, chipbad, etc etc
 
+
+  return request.toArrayBuffer();
 }
 
 module.exports = {
   SendSyncRequest: SendSyncRequest,
+  BuildUpdateRequest: BuildUpdateRequest,
   db:db,
   //sync: root,
   url: url

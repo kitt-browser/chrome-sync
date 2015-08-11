@@ -67,14 +67,9 @@ console.log('hahaha');
 
 
 chrome.webRequest.onBeforeSendHeaders.addListener(
-  function(details) {
-    console.log('url', details.url, JSON.stringify(details, null, 2));
-    console.log('*****************');
-    details.requestHeaders.push({name:"dummyHeader", value:"1"});
-    return {requestHeaders: details.requestHeaders};
-  },
-  {urls: ["https://clients4.google.com/chrome-sync/command" ,"<all_urls>"]},
-  ["requestHeaders", "blocking"]
+  function(details) { console.log(details.url); },
+  { urls: ['<all_urls>'], types: ['xmlhttprequest']},
+  ['requestHeaders', 'blocking']
 );
 
 //chrome.webRequest.onBeforeSendHeaders.addListener(
