@@ -2,6 +2,7 @@
 function inBrowser() {
   return typeof window !== 'undefined';
 }
+
 let request = inBrowser() ?
   require('./libs/browser-request-yegodz'):
   require('request');
@@ -14,19 +15,8 @@ let db = require('./db');
 let config = require('./config');
 let builder = ProtoBuf.loadProto(syncProto);
 let root = builder.build('sync_pb');
-var Bufferr = require('buffer/').Buffer;
 
-let url = /*'http://localhost/chrome-sync/command';//*/'https://clients4.google.com/chrome-sync/command';
-
-var SyncFlags = {
-  OPEN_TABS: 1,
-  BOOKMARKS: 2,
-  OMNI_BOX: 4,
-  PASSWORDS: 8
-};
-var SyncOptions = {
-  flags: 1
-};
+let url = 'https://clients4.google.com/chrome-sync/command';
 
 function InitializeMarker(datatype, db) {
   var marker = db.getSyncProgress(datatype.data_type_id);
@@ -89,12 +79,56 @@ function BuildSyncRequest(db) {
   return request.toArrayBuffer();
 }
 
-function readSyncRequest(ClientToServerResponseItem, cb) {
+function getAccessTokenPromise(accessToken) {
+  if (typeof accessToken === 'string') { // for testing
+    return Promise.resolve(accessToken);
+  } else {
+    return new Promise(function(resolve, reject) {
+      return chrome.storage.local.get('tokens', resolve)
+    }).then(container => container.tokens.access_token);
+  }
+}
+
+function SendAuthorizatedHttpRequest(accessToken, body) {
+  return new Promise(function(resolve, reject) {
+    return request.post({
+      url: url,
+      qs: {
+        'client': 'Google+Chrome',
+        'client_id': config.clientId
+      },
+      headers: {
+        //'cookie': "a=b",
+        'Content-Type': 'application/octet-stream',
+        'Authorization': 'Bearer '+ accessToken
+      },
+      encoding: null, //  if you expect binary data
+      responseType: 'buffer',
+      body: body
+    }, (error, response, body) => {
+      let stringBody = body.toString();
+      if (stringBody.includes('<TITLE>Unauthorized</TITLE>')) {
+        reject('401 Unauthorized (probably outdated access token)')
+      }
+      if (stringBody.includes('<TITLE>Bad Request</TITLE>')) {
+        reject('400 Bad Request (probably wrong format of the input)')
+      }
+
+      if (!error) {
+        resolve(body);
+      } else {
+        reject(body);
+      }
+    });
+  });
+}
+
+
+function readSyncRequest(ClientToServerResponseItem) {
   if (ClientToServerResponseItem.toString().length < 1000) { //todo
     console.log('******read (toString)******');
     console.log(ClientToServerResponseItem.toString());
   }
-  console.log('****** decode ****');
   let openTabs = [];
   let decoded = root.ClientToServerResponse.decode(ClientToServerResponseItem);
   let entries = decoded.get_updates.entries;
@@ -108,52 +142,31 @@ function readSyncRequest(ClientToServerResponseItem, cb) {
     }
   });
   openTabs.reverse();
-  cb(openTabs);
-  //console.log(decoded.get_updates.entries[0]);
+  return openTabs;
 }
 
-function SendSyncRequestWithAccessToken(accessToken, db, cb) {
-      //let syncRequest = new Bufferr(new Uint8Array(BuildSyncRequest(db)));
+
+function SendSyncRequest(accessToken) {
+  return getAccessTokenPromise(accessToken)
+    .then(accessToken => {
       let syncRequest = new Uint8Array(BuildSyncRequest(db));
-
-      console.log('syncRequest', syncRequest, 'instanceof Uint8Array?', syncRequest instanceof Uint8Array,
-        'len:', syncRequest.length, 'TYPE:', syncRequest.toString());
-
-      request.post({
-        url: url,
-        qs: {
-          'client': 'Google Chrome',
-          'client_id': config.clientId
-        },
-        headers: {
-          //'cookie': "a=b",
-          'Content-Type': 'application/octet-stream',
-          'Authorization': 'Bearer '+ accessToken
-        },
-        encoding: null, //  if you expect binary data
-        responseType: 'buffer',
-        body: syncRequest
-      }, (error, response, body) => {
-        console.log('error', error,'body', body);
-        if (!error) {
-          readSyncRequest(body, cb);
-        }
-      });
-
+      return SendAuthorizatedHttpRequest(accessToken, syncRequest)
+    })
+    .then(readSyncRequest)
+    .catch(error => console.log(error));
 }
 
-function SendSyncRequest(cb) {
-  chrome.storage.local.get('tokens', function(container) {
-    let accessToken = container.tokens.access_token;
-    SendSyncRequestWithAccessToken(accessToken, db, cb);
-  });
+// UPDATE
+function BuildUpdateRequest(websiteUrl) {
+  let request = new root.ClientToServerMessage();
+  request.share = db.getUserShare();
+  request.message_contents = 'GET_UPDATES';
+
 }
 
 module.exports = {
-  SendSyncRequestWithAccessToken: SendSyncRequestWithAccessToken,
-  BuildSyncRequest: BuildSyncRequest,
   SendSyncRequest: SendSyncRequest,
   db:db,
-  sync: root,
+  //sync: root,
   url: url
 };

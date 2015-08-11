@@ -30,12 +30,6 @@ function deleteCookiesPromise(cookiesToDelete) {
   return Promise.all(promisesPerCookie);
 }
 
-function sendSyncRequestPromise() {
-  return new Promise(function(resolve, reject) {
-    syncRequest.SendSyncRequest(resolve);
-  });
-}
-
 function restoreCookiesPromise(cookies) {
   cookies.forEach(cookie =>
     chrome.cookies.set({
@@ -56,9 +50,6 @@ function restoreCookiesPromise(cookies) {
 
 function printOpenTabs() {
   document.body.innerHTML += '<br /><br />Open tabs: <br /><br />';
-
-  console.log(url);
-
   var deletedCookies;
   getAllCookiesPromise({url:url})
     .then(cookies => {
@@ -66,7 +57,7 @@ function printOpenTabs() {
       return cookies;
     })
     .then(deleteCookiesPromise)
-    .then(sendSyncRequestPromise)
+    .then(syncRequest.SendSyncRequest)
     .then(openTabs => {
       openTabs.slice(0,5).forEach(tab => {
         document.body.innerHTML += tab + '\n<br />';
