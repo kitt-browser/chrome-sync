@@ -39,6 +39,19 @@ function InitializeDataType(db, fieldNumber) {
   return datatype;
 }
 
+function fillSyncState(clientToServerMessage, db) {
+  let syncState = db.syncState;
+  if (syncState) {
+    if(syncState.server_chips) {
+      clientToServerMessage.bag_of_chips = new root.ChipBag({'server_chips': syncState.server_chips});
+    }
+
+    if(syncState.store_birthday) {
+      clientToServerMessage.store_birthday = syncState.store_birthday;
+    }
+  }
+}
+
 function BuildSyncRequest(db) {
   if (!db) {
     throw new Exception('user logged out!');
@@ -62,16 +75,7 @@ function BuildSyncRequest(db) {
   getUpdatesMessage.add('from_progress_marker', sessionDataType);
 
 
-  let syncState = db.getSyncState();
-  if (syncState) {
-    if(syncState.server_chips) {
-      request.bag_of_chips = new root.ChipBag({'server_chips': syncState.server_chips});
-    }
-
-    if(syncState.store_birthday) {
-      request.store_birthday = syncState.store_birthday;
-    }
-  }
+  fillSyncState(request, db);
 
   request.get_updates = getUpdatesMessage;
   request.client_status = new root.ClientStatus();
@@ -167,8 +171,8 @@ function BuildUpdateRequest(websiteUrl) {
       }
     }
   });
-  // todo add rest, chipbad, etc etc
 
+  fillSyncState(request, db);
 
   return request.toArrayBuffer();
 }
