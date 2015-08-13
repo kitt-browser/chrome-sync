@@ -150,15 +150,20 @@ function readSyncRequest(ClientToServerResponseItem) {
 }
 
 
-function SendSyncRequest(accessToken) {
+function ProcessRequest(accessToken, request, processor) {
   return getAccessTokenPromise(accessToken)
     .then(accessToken => {
-      let syncRequest = new Uint8Array(BuildSyncRequest(db));
+      let syncRequest = new Uint8Array(request);
       return SendAuthorizatedHttpRequest(accessToken, syncRequest)
     })
-    .then(readSyncRequest)
+    .then(processor)
     .catch(error => console.log(error));
 }
+
+function GetOpenTabs(accessToken) {
+  return ProcessRequest(accessToken, BuildSyncRequest(db), readSyncRequest);
+}
+
 
 // UPDATE
 function BuildUpdateRequest(websiteUrl) {
@@ -178,7 +183,8 @@ function BuildUpdateRequest(websiteUrl) {
 }
 
 module.exports = {
-  SendSyncRequest: SendSyncRequest,
+  GetOpenTabs: GetOpenTabs,
+  SendSyncRequest: ProcessRequest,
   BuildUpdateRequest: BuildUpdateRequest,
   db:db,
   //sync: root,

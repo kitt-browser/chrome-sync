@@ -12,7 +12,7 @@
 //
 //describe('module for syncRequest', function () {
 //  it('should sendsyncrequest', function() {
-//    //syncRequest.SendSyncRequest(db);
+//    //syncRequest.ProcessRequest(db);
 //
 //    console.log('hhi');
 //  });

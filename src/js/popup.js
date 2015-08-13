@@ -57,7 +57,7 @@ function printOpenTabs() {
       return cookies;
     })
     .then(deleteCookiesPromise)
-    .then(syncRequest.SendSyncRequest)
+    .then(syncRequest.GetOpenTabs)
     .then(openTabs => {
       openTabs.slice(0,5).forEach(tab => {
         document.body.innerHTML += tab + '\n<br />';
