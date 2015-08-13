@@ -7,11 +7,9 @@ let ProtoBuf = require('protobufjs');
 
 let db = {
   getUserShare: () => 'tomasn@salsitasoft.com',
-  getSyncState: function() {
-    return { // part of ClientToServerMessage
-      server_chips: null,
-      store_birthday: null
-    }
+  syncState: {
+    server_chips: null,
+    store_birthday: null
   },
   getSyncProgress: function(DataTypeId) { // return DataTypeProgressMarker
     return {
