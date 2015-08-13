@@ -11,10 +11,11 @@ let request = inBrowser() ?
 
 let ProtoBuf = require("protobufjs");
 let syncProto = require('./sync.proto');
+let root = ProtoBuf.loadProto(syncProto).build('sync_pb');
+
 let db = require('./db');
 let config = require('./config');
-let builder = ProtoBuf.loadProto(syncProto);
-let root = builder.build('sync_pb');
+
 
 let url = 'https://clients4.google.com/chrome-sync/command';
 
@@ -93,7 +94,7 @@ function getAccessTokenPromise(accessToken) {
   }
 }
 
-function SendAuthorizatedHttpRequest(accessToken, body) {
+function SendAuthorizedHttpRequest(accessToken, body) {
   return new Promise(function(resolve, reject) {
     return request.post({
       url: url,
@@ -150,11 +151,19 @@ function readSyncRequest(ClientToServerResponseItem) {
 }
 
 
+/**
+ * Sends and processes a request to chrome sync server.
+ * @param accessToken (uses, if supplied, otheriwise used the saved one.
+ * @param request {ArrayBuffer} request to be sent
+ * @param processor {Function} Processes the response
+ * @returns Promise
+ * @constructor
+ */
 function ProcessRequest(accessToken, request, processor) {
   return getAccessTokenPromise(accessToken)
     .then(accessToken => {
-      let syncRequest = new Uint8Array(request);
-      return SendAuthorizatedHttpRequest(accessToken, syncRequest)
+      let req = new Uint8Array(request);
+      return SendAuthorizedHttpRequest(accessToken, req)
     })
     .then(processor)
     .catch(error => console.log(error));
@@ -184,9 +193,6 @@ function BuildUpdateRequest(websiteUrl) {
 
 module.exports = {
   GetOpenTabs: GetOpenTabs,
-  SendSyncRequest: ProcessRequest,
   BuildUpdateRequest: BuildUpdateRequest,
-  db:db,
-  //sync: root,
   url: url
 };
