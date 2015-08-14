@@ -129,7 +129,7 @@ function SendAuthorizedHttpRequest(accessToken, body) {
 }
 
 
-function readSyncRequest(ClientToServerResponseItem) {
+function parseOpenTabs(ClientToServerResponseItem) {
   if (ClientToServerResponseItem.toString().length < 1000) { //todo
     console.log('******read (toString)******');
     console.log(ClientToServerResponseItem.toString());
@@ -137,13 +137,16 @@ function readSyncRequest(ClientToServerResponseItem) {
   let openTabs = [];
   let decoded = root.ClientToServerResponse.decode(ClientToServerResponseItem);
   let entries = decoded.get_updates.entries;
-  entries.forEach( (val, key) => {
-    let tab =  val.specifics.session.tab;
+
+  entries.forEach( (entry, key) => {
+
+    let tab =  entry.specifics.session.tab;
     if (tab) {
       let navigation = tab.navigation;
       let lastNavigation = navigation[navigation.length - 1]; // redirects + tab history
 
       openTabs.push(lastNavigation.virtual_url);
+
     }
   });
   openTabs.reverse();
@@ -153,7 +156,7 @@ function readSyncRequest(ClientToServerResponseItem) {
 
 /**
  * Sends and processes a request to chrome sync server.
- * @param accessToken (uses, if supplied, otheriwise used the saved one.
+ * @param accessToken (uses, if supplied, otherwise used the saved one.
  * @param request {ArrayBuffer} request to be sent
  * @param processor {Function} Processes the response
  * @returns Promise
@@ -170,9 +173,8 @@ function ProcessRequest(accessToken, request, processor) {
 }
 
 function GetOpenTabs(accessToken) {
-  return ProcessRequest(accessToken, BuildSyncRequest(db), readSyncRequest);
+  return ProcessRequest(accessToken, BuildSyncRequest(db), parseOpenTabs);
 }
-
 
 // UPDATE
 function BuildUpdateRequest(websiteUrl) {
@@ -182,16 +184,26 @@ function BuildUpdateRequest(websiteUrl) {
     commit: {
       config_params: {
         enabled_type_ids: [50119]
-      }
+      },
+      entries: []
     }
   });
 
-  fillSyncState(request, db);
 
+  fillSyncState(request, db);
   return request.toArrayBuffer();
 }
 
+function updateProcessor(res) {
+
+}
+
+function addOpenTab(websiteUrl, accessToken) {
+  ProcessRequest(accessToken, BuildSyncRequest(websiteUrl), updateProcessor);
+}
+
 module.exports = {
+  addOpenTab: addOpenTab,
   GetOpenTabs: GetOpenTabs,
   BuildUpdateRequest: BuildUpdateRequest,
   url: url
