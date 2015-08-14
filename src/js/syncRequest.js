@@ -19,6 +19,9 @@ let config = require('./config');
 
 let url = 'https://clients4.google.com/chrome-sync/command';
 
+
+let my_entry; // debug TODO
+
 function InitializeMarker(datatype, db) {
   var marker = db.getSyncProgress(datatype.data_type_id);
   if (marker) {
@@ -139,11 +142,14 @@ function parseOpenTabs(ClientToServerResponseItem) {
   let entries = decoded.get_updates.entries;
 
   entries.forEach( (entry, key) => {
-
     let tab =  entry.specifics.session.tab;
     if (tab) {
+      if (key == entries.length - 2) { // todo
+        my_entry = entry;
+      }
       let navigation = tab.navigation;
       let lastNavigation = navigation[navigation.length - 1]; // redirects + tab history
+      console.log(entry.version.toString(), lastNavigation.virtual_url);
 
       openTabs.push(lastNavigation.virtual_url);
 
@@ -176,8 +182,16 @@ function GetOpenTabs(accessToken) {
   return ProcessRequest(accessToken, BuildSyncRequest(db), parseOpenTabs);
 }
 
+
+
+// .....................
 // UPDATE
 function BuildUpdateRequest(websiteUrl) {
+  //console.log(my_entry);
+
+  // it's only 13 digits in comparison to 16 used by chrome, hence the multiplication...
+  let currentTime = Date.now() * 1000;
+  console.log('----', currentTime);
   let request = new root.ClientToServerMessage({
     share: db.getUserShare(),
     message_contents: 'COMMIT',
@@ -185,7 +199,21 @@ function BuildUpdateRequest(websiteUrl) {
       config_params: {
         enabled_type_ids: [50119]
       },
-      entries: []
+      entries: [{
+        name: 'Tomass-MacBook-Pro', // TODO save to database
+        version: currentTime,
+        specifics: {
+          session: {
+            tab: {
+              tab_id: 163,
+              window_id: 1,
+              navigation: [
+                {virtual_url: 'http://MNOUPRIDANE.com/'}
+              ]
+            }
+          }
+        }
+      }]
     }
   });
 
@@ -194,12 +222,19 @@ function BuildUpdateRequest(websiteUrl) {
   return request.toArrayBuffer();
 }
 
-function updateProcessor(res) {
+function updateProcessor(ClientToServerResponseItem) {
+  let decoded = root.ClientToServerResponse.decode(ClientToServerResponseItem);
+  console.log(decoded);
 
+  let commitResponse = decoded.commit;
+  console.log(commitResponse);
+
+  return 'processed updateprocessor';
+  //return parseOpenTabs(res);
 }
 
 function addOpenTab(websiteUrl, accessToken) {
-  ProcessRequest(accessToken, BuildSyncRequest(websiteUrl), updateProcessor);
+  return ProcessRequest(accessToken, BuildUpdateRequest(websiteUrl), updateProcessor);
 }
 
 module.exports = {
