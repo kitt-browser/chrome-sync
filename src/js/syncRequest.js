@@ -220,168 +220,34 @@ function BuildUpdateRequest(websiteUrl, db) {
         tabs_datatype_enabled: true
       },
       entries: [{ // Sync entity, filled like chrome://sync-internals
-        attachment_id: [],
-        client_defined_unique_tag: 'PKNCGfsKowE0Tu+LjuxPe5C05mY=',//randomString,
+        //attachment_id: [],
+        //client_defined_unique_tag: 'PKNCGfsKowE0Tu+LjuxPe5C05mY=',//randomString,
 
         // 2* whatever
-        ctime: currentTime,
-        mtime: currentTime,
+        //ctime: currentTime,
+        //mtime: currentTime,
 
         name: websiteUrl,
         non_unique_name: websiteUrl,
-        folder: false,
         // it's only 13 digits in comparison to 16 used by chrome, hence the multiplication...
         version: currentTime * 1000,
         id_string: 'Z:ADqtAZxYtpOdmzFl4Fx/ECWEY2U2xytR+HKbgS6Ud13Bb9BHEPoxUw13MrSWNggmBakjrFWFtkZvaCM9eYPsYvwo8D1I1hlzWw==',
         specifics: {
           "session": {
-            "session_tag": "session_syncJnGGyLEoZ3C+9bWCPbO2QQ==",
+            //"session_tag": "session_syncJnGGyLEoZ3C+9bWCPbO2QQ==",
             "tab": {
-              "current_navigation_index": 3,
-              "extension_app_id": "",
               "navigation": [
                 {
-                  "content_pack_categories": [],
-                  "correct_referrer_policy": 1,
-                  "favicon_url": "https://www.google.cz/favicon.ico",
-                  "global_id": 13084546975680614,
-                  "http_status_code": 200,
-                  "is_restored": false,
-                  "navigation_chain_end": false,
-                  "navigation_chain_start": false,
-                  "navigation_forward_back": false,
-                  "navigation_from_address_bar": false,
-                  "navigation_home_page": false,
-                  "navigation_redirect": [],
-                  "obsolete_referrer_policy": 1,
-                  "page_transition": "TYPED",
-                  "referrer": "",
-                  "search_terms": "",
-                  "timestamp_msec": 1440073375680,
-                  "title": "New Tab",
-                  "unique_id": 793,
-                  "virtual_url": "chrome://newtab/"
-                },
-                {
-                  "content_pack_categories": [],
-                  "correct_referrer_policy": 1,
-                  "favicon_url": "https://www.google.cz/favicon.ico",
-                  "global_id": 13084546980612161,
-                  "http_status_code": 200,
-                  "is_restored": false,
-                  "navigation_chain_end": false,
-                  "navigation_chain_start": false,
-                  "navigation_forward_back": false,
-                  "navigation_from_address_bar": true,
-                  "navigation_home_page": false,
-                  "navigation_redirect": [
-                    {
-                      "url": "https://www.google.cz/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8"
-                    }
-                  ],
-                  "obsolete_referrer_policy": 1,
-                  "page_transition": "GENERATED",
-                  "referrer": "",
-                  "search_terms": "",
-                  "timestamp_msec": 1440073380612,
-                  "title": "studijni oddeleni mff - Google Search",
-                  "unique_id": 795,
-                  "virtual_url": "https://www.google.cz/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=studijni%20oddeleni%20mff"
-                },
-                {
-                  "content_pack_categories": [],
-                  "correct_referrer_policy": 4,
-                  "favicon_url": "http://www.mff.cuni.cz/res2013/images/favicon.ico",
-                  "global_id": 13084546983097646,
-                  "http_status_code": 200,
-                  "is_restored": false,
-                  "navigation_chain_end": false,
-                  "navigation_chain_start": false,
-                  "navigation_forward_back": false,
-                  "navigation_from_address_bar": false,
-                  "navigation_home_page": false,
-                  "navigation_redirect": [],
-                  "obsolete_referrer_policy": 3,
-                  "page_transition": "LINK",
-                  "referrer": "https://www.google.cz/",
-                  "search_terms": "",
-                  "timestamp_msec": 1440073383097,
-                  "title": "MFF / Fakulta / Studijní oddělení / Studijní oddělení",
-                  "unique_id": 799,
-                  "virtual_url": "http://www.mff.cuni.cz/fakulta/stud/"
-                },
-                {
-                  "content_pack_categories": [],
-                  "correct_referrer_policy": 1,
-                  "favicon_url": "http://www.mff.cuni.cz/res2013/images/favicon.ico",
-                  "global_id": 13084547018036366,
-                  "http_status_code": 200,
-                  "is_restored": false,
-                  "navigation_chain_end": false,
-                  "navigation_chain_start": false,
-                  "navigation_forward_back": false,
-                  "navigation_from_address_bar": false,
-                  "navigation_home_page": false,
-                  "navigation_redirect": [
-                    {
-                      "url": "http://www.mff.cuni.cz/Lucie.Simunkova"
-                    },
-                    {
-                      "url": "http://www.mff.cuni.cz/fakulta/struktura/lide/Lucie.Simunkova"
-                    },
-                    {
-                      "url": "http://www.mff.cuni.cz/fakulta/struktura/lide/lucie.simunkova"
-                    }
-                  ],
-                  "obsolete_referrer_policy": 1,
-                  "page_transition": "LINK",
-                  "referrer": "http://www.mff.cuni.cz/fakulta/stud/",
-                  "search_terms": "",
-                  "timestamp_msec": 1440073418036,
-                  "title": "Organizační struktura / Lucie Šimůnková",
-                  "unique_id": 801,
-                  "virtual_url": "http://www.mff.cuni.cz/fakulta/struktura/lide/889.htm"
-                },
-                {
-                  "content_pack_categories": [],
-                  "correct_referrer_policy": 1,
-                  "favicon_url": "http://www.mff.cuni.cz/res2013/images/favicon.ico",
-                  "global_id": 13084547018036367,
-                  "http_status_code": 200,
-                  "is_restored": false,
-                  "navigation_chain_end": false,
-                  "navigation_chain_start": false,
-                  "navigation_forward_back": false,
-                  "navigation_from_address_bar": false,
-                  "navigation_home_page": false,
-                  "navigation_redirect": [
-                    {
-                      "url": "http://www.mff.cuni.cz/Lucie.Simunkova222"
-                    },
-                    {
-                      "url": "http://www.mff.cuni.cz/fakulta/struktura/lide/Lucie.Simunkova222"
-                    },
-                    {
-                      "url": "http://www.mff.cuni.cz/fakulta/struktura/lide/lucie.simunkova2222"
-                    }
-                  ],
-                  "obsolete_referrer_policy": 1,
-                  "page_transition": "LINK",
-                  "referrer": "http://www.mff.cuni.cz/fakulta/stud/",
-                  "search_terms": "",
-                  "timestamp_msec": "1440073418036",
+                  //"timestamp_msec": "1440073418036",
                   "title": "Organizační struktura / Lucie ŠimůnkováHAHAAHA",
-                  "unique_id": 801,
-                  "virtual_url": "http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATE222.htm"
+                  //"unique_id": 801,
+                  "virtual_url": "http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATE2345.htm"
                 }
               ],
-              "pinned": false,
               "tab_id": 397,
-              "tab_visual_index": 0,
-              "variation_id": [],
               "window_id": 1
             },
-            "tab_node_id": 337
+            //"tab_node_id": 337 // MAY turn out to be important...
           }
 
 
