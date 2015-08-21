@@ -3,8 +3,7 @@
  * It's internal tool Protobuf.js/bin/pbjs -t proto ./protocol/sync.proto > ./sync.proto.js
  */
 
-module.exports = `
-package sync_pb;
+module.exports = `package sync_pb;
 
 option optimize_for = "LITE_RUNTIME";
 
@@ -754,8 +753,8 @@ message TypedUrlSpecifics {
     optional string url = 1;
     optional string title = 2;
     optional bool hidden = 4;
-    optional int64 visits = 7 [packed = true];
-    optional int32 visit_transitions = 8 [packed = true];
+    repeated int64 visits = 7 [packed = true];
+    repeated int32 visit_transitions = 8 [packed = true];
 }
 
 message UniquePosition {
@@ -981,7 +980,7 @@ message GetCrashInfoResponse {
 }
 
 message CommitResponse {
-    optional EntryResponse entryresponse = 1;
+    repeated EntryResponse entryresponse = 1;
 
     enum ResponseType {
         SUCCESS = 1;
@@ -1077,5 +1076,4 @@ message EventResponse {
 message SyncDisabledEvent {
     optional string cache_guid = 1;
     optional string store_birthday = 2;
-}
-`;
+}`;
