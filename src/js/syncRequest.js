@@ -241,7 +241,7 @@ function BuildUpdateRequest(websiteUrl, db) {
                   //"timestamp_msec": "1440073418036",
                   "title": "Organizační struktura / Lucie ŠimůnkováHAHAAHA",
                   //"unique_id": 801,
-                  "virtual_url": "http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATE2345.htm"
+                  "virtual_url": "http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATTE.htm"
                 }
               ],
               "tab_id": 397,
