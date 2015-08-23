@@ -75,7 +75,7 @@ function getAccessTokenPromise(accessToken) {
 /**
  * Sends the request and processes the response from the chrome sync server.
  * @param accessToken (uses, if supplied, otherwise used the saved one.
- * @param request {ArrayBuffer} request to be sent
+ * @param request {Protofuf message} request to be sent
  * @param processor {Function} Processes the response
  * @param db database Used for bag of chips and store birthday
  * @returns Promise
@@ -85,7 +85,7 @@ function processClientToServerRequest(accessToken, request, processor, db) {
   return getAccessTokenPromise(accessToken)
     .then(accessToken => {
       fillSyncState(request, db);
-      let req = new Uint8Array(request);
+      let req = new Uint8Array(request.toArrayBuffer());
       return sendAuthorizedHttpRequest(accessToken, req)
     })
     .then(response => {

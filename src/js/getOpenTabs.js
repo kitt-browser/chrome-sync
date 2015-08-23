@@ -44,8 +44,7 @@ function BuildSyncRequest(db) {
   let sessionDataType = InitializeDataType(db, 50119);  // EntitySpecifics -> tag number
   request.get_updates.add('from_progress_marker', sessionDataType);
 
-  clientToServerRequest.fillSyncState(request, db);
-  return request.toArrayBuffer();
+  return request;
 }
 
 function parseOpenTabs(ClientToServerResponseItem) {
@@ -71,7 +70,6 @@ function parseOpenTabs(ClientToServerResponseItem) {
   openTabs.reverse();
   return openTabs;
 }
-
 
 function getOpenTabs(accessToken) {
   let db = clientToServerRequest.db;

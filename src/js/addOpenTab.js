@@ -41,7 +41,7 @@ function BuildUpdateRequest(websiteUrl, db) {
                   //"timestamp_msec": "1440073418036",
                   "title": "Organizační struktura / Lucie ŠimůnkováHAHAAHA",
                   //"unique_id": 801,
-                  "virtual_url": "http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATTE1.htm"
+                  "virtual_url": "http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATTE1234.htm"
                 }
               ],
               "tab_id": 1027,
@@ -54,8 +54,8 @@ function BuildUpdateRequest(websiteUrl, db) {
     }
   });
 
-  clientToServerRequest.fillSyncState(request, db);
-  return request.toArrayBuffer();
+  //clientToServerRequest.fillSyncState(request, db);
+  return request;
 }
 
 function updateProcessor(ClientToServerResponseItem) {
