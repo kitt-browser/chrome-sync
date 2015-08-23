@@ -1,7 +1,9 @@
 let querystring = require('querystring');
 let config = require('./config');
-let syncRequest = require('./syncRequest');
-let url = syncRequest.url;
+let clientToServerRequest = require('./clientToServerRequest');
+let url = clientToServerRequest.url;
+
+let getOpenTabs = require('./getOpenTabs');
 
 function authentificate() {
   let url = 'https://accounts.google.com/o/oauth2/auth' + '?' + querystring.stringify({
@@ -57,7 +59,7 @@ function printOpenTabs() {
       return cookies;
     })
     .then(deleteCookiesPromise)
-    .then(syncRequest.GetOpenTabs)
+    .then(getOpenTabs)
     .then(openTabs => {
       openTabs.slice(0,5).forEach(tab => {
         document.body.innerHTML += tab + '\n<br />';

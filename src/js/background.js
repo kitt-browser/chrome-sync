@@ -1,6 +1,5 @@
 let request = require('request');
 let config = require('./config');
-let ProtoBuf = require("protobufjs");
 
 function getAPITokens(authorizationCode, cb) {
   request.post({
@@ -61,13 +60,21 @@ refreshAccessToken();
 setInterval(refreshAccessToken, 1000* 3600);
 
 
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+//  console.log('tabId:', tabId);
+//  console.log('changeInfo:', changeInfo);
+//  console.log('tab:', tab);
+});
 
 
-console.log('hahaha');
 
+// for debugging purposes only
+chrome.tabs.onActivated.addListener(activeInfo => {
+  console.log(`activated tab: tabId=${activeInfo.tabId}, windowId=${activeInfo.windowId}`);
+});
 
-chrome.webRequest.onBeforeSendHeaders.addListener(
-  function(details) { console.log(details.url); },
-  { urls: ['<all_urls>'], types: ['xmlhttprequest']},
-  ['requestHeaders', 'blocking']
-);
+//chrome.webRequest.onBeforeSendHeaders.addListener(
+//  function(details) { console.log(details.url); },
+//  { urls: ['<all_urls>'], types: ['xmlhttprequest']},
+//  ['requestHeaders', 'blocking']
+//);
