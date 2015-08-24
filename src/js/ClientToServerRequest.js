@@ -92,6 +92,9 @@ function processClientToServerRequest(accessToken, request, processor, db) {
       console.log('got response');
       let decodedClientToServerResponse = root.ClientToServerResponse.decode(response);
       let birthday = decodedClientToServerResponse.store_birthday;
+      if (birthday.startsWith('birthday_error')) {
+        throw new Error('Birthday error: probably you authorized the tokens under different Google account from which you are sending requests.');
+      }
       let new_chips = decodedClientToServerResponse.new_bag_of_chips;
       if (new_chips) {
         new_chips = new_chips.server_chips;
