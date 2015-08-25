@@ -1,11 +1,28 @@
+#!/usr/bin/env iojs --harmony --harmony_arrow_functions --harmony_object_literals
+
 // This file is used for testing the openTabs and addNewTab commands.
-// you should run it as |iojs   --harmony --harmony_arrow_functions --harmony_object_literals ./runsync.js|
+// you should run it as |./runsync.js --token=<your_access_token>|
+// To obtain the access token, open the popup window(browser action) of the extension and copy&paste it.
+// Token is valid for 1 hour.
 
 'use strict';
 
+
+let accessToken = false;
+process.argv.forEach( val => {
+  let tokenStart = '--token=';
+  if (val.startsWith(tokenStart)) {
+    accessToken = val.substr(tokenStart.length);
+  }
+});
+
+if (!accessToken) {
+  console.log('Error. Not supplied with access_token. Please run it as |./runsync.js --token=<your_access_token>|');
+  process.exit(1);
+}
+
 // ... old version, obsolete, But I have if in case I checkout to some older commit.
 // let s = require('./src/js/syncRequest');
-// let accessToken = "ya29.2QHaUp9o8nZHtiqkwMh5NJ1tTIE-UvOOzzzmZKaboSZtBhMMyIs96uuGq0oy8sDwDbst";
 //
 // s.GetOpenTabs(accessToken).then(tabs => {
 //   console.log('********************************');
@@ -18,15 +35,8 @@
 // );
 //
 
-
-
-
 let getOpenTabs = require('./src/js/getOpenTabs');
 let addOpenTab = require('./src/js/addOpenTab');
-
-// you obtain the access token when you open the popup window(browser action) of the extension. Valid for 1 hour.
-let accessToken ="ya29.2gGIrmkAnxlKBWCuTz9TGSvoGplaEya6ypWBATaE-H6SQpHXe6yKMaAT_bLEgRtzzIbC4A";
-
 
 getOpenTabs(accessToken).then(tabs => {
   console.log('********************************');

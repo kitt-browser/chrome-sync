@@ -29,7 +29,7 @@ function BuildUpdateRequest(websiteUrl, db) {
         non_unique_name: websiteUrl,
         // it's only 13 digits in comparison to 16 used by chrome, hence the multiplication...
         version: currentTime * 1000,
-        id_string: 'Z:ADqtAZxYtpOdmzFl4Fx/ECWEY2U2xytR+HKbgS6Ud13Bb9BHEPoxUw13MrSWNggmBakjrFWFtkZvaCM9eYPsYvwo8D1I1hlzWw==',
+        id_string: 'Z:ADqtAZxYtpOdmzFl4Fx/ECWEY2U2kYXteUIX7INS5EMsLOuJNGakPbIrIN44x8+PdrZGsCCjrJvYmxgYGeZjPy0+sX1pxVghog==',
         specifics: {
           "session": {
             //"session_tag": "session_syncJnGGyLEoZ3C+9bWCPbO2QQ==",
@@ -39,7 +39,7 @@ function BuildUpdateRequest(websiteUrl, db) {
                   //"timestamp_msec": "1440073418036",
                   "title": "Organizační struktura / Lucie ŠimůnkováHAHAAHA",
                   //"unique_id": 801,
-                  "virtual_url": "http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATTE.HTMLP"
+                  "virtual_url": "http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATTE.HTMLPCAMREPLACE"
                 }
               ],
               //"tab_id": 1027,
