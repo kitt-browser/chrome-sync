@@ -31,20 +31,20 @@ function fillSyncState(clientToServerMessage, db) {
 
 function sendAuthorizedHttpRequest(accessToken, body) {
   return new Promise(function(resolve, reject) {
-    return request.post({
-      url: url,
-      qs: {
-        'client': 'Google+Chrome',
-        'client_id': config.clientId
-      },
-      headers: {
-        'Content-Type': 'application/octet-stream',
-        'Authorization': 'Bearer '+ accessToken
-      },
-      encoding: null, //  if you expect binary data
-      responseType: 'buffer',
-      body: body
-    }, (error, response, body) => {
+      return request.post({
+        url: url,
+        qs: {
+          'client': 'Google+Chrome',
+          'client_id': config.clientId
+        },
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'Authorization': 'Bearer '+ accessToken
+        },
+        encoding: null, //  if you expect binary data
+        responseType: 'buffer',
+        body: body
+      }, (error, response, body) => {
       let stringBody = body.toString();
       if (stringBody.includes('<TITLE>Unauthorized</TITLE>')) {
         reject('401 Unauthorized (probably outdated access token)')

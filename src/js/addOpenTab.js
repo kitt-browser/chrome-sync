@@ -2,8 +2,6 @@
 let clientToServerRequest = require('./clientToServerRequest');
 
 function BuildUpdateRequest(websiteUrl, db) {
-  //console.log(my_entry);
-
   let currentTime = Date.now();
 
   // in format "rand271398.372016847131440062545931"
@@ -24,7 +22,7 @@ function BuildUpdateRequest(websiteUrl, db) {
         //client_defined_unique_tag: 'PKNCGfsKowE0Tu+LjuxPe5C05mY=',//randomString,
 
         // 2* whatever
-        //ctime: currentTime,
+        ctime: currentTime,
         //mtime: currentTime,
 
         name: websiteUrl,
@@ -41,13 +39,13 @@ function BuildUpdateRequest(websiteUrl, db) {
                   //"timestamp_msec": "1440073418036",
                   "title": "Organizační struktura / Lucie ŠimůnkováHAHAAHA",
                   //"unique_id": 801,
-                  "virtual_url": "http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATTE1234.htm"
+                  "virtual_url": "http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATTE.HTMLP"
                 }
               ],
-              "tab_id": 1027,
-              "window_id": 637
+              //"tab_id": 1027,
+             // "window_id": 637
             },
-            "tab_node_id": 336 // MAY turn out to be important...
+            //"tab_node_id": 336 // MAY turn out to be important...
           }
         }
       }]
