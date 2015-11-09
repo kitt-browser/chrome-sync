@@ -52,7 +52,7 @@ function BuildUpdateRequest(websiteUrl, db) {
     }
   });
 
-  //clientToServerRequest.fillSyncState(request, db);
+  //clientToServerRequest.fillRequestFromDatabase(request, db);
   return request;
 }
 
@@ -67,7 +67,9 @@ function updateProcessor(ClientToServerResponseItem) {
 
 function addOpenTab(websiteUrl, accessToken) {
   let db = clientToServerRequest.db;
-  return clientToServerRequest.processClientToServerRequest(accessToken, BuildUpdateRequest(websiteUrl, db), updateProcessor, db);
+  return clientToServerRequest.sendRequest(accessToken, BuildUpdateRequest(websiteUrl, db), db)
+    .then(updateProcessor)
+    .catch(error => console.log(error));
 }
 
 module.exports = addOpenTab;

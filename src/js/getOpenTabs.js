@@ -1,5 +1,6 @@
 'use strict';
 let clientToServerRequest = require('./clientToServerRequest');
+let db = require('./db');
 
 let my_entry; // debug TODO
 
@@ -72,8 +73,9 @@ function parseOpenTabs(ClientToServerResponseItem) {
 }
 
 function getOpenTabs(accessToken) {
-  let db = clientToServerRequest.db;
-  return clientToServerRequest.processClientToServerRequest(accessToken, BuildSyncRequest(db), parseOpenTabs, db);
+  return clientToServerRequest.sendRequest(accessToken, BuildSyncRequest(db), db)
+    .then(parseOpenTabs)
+    .catch(error => console.log(error));
 }
 
 module.exports = getOpenTabs;

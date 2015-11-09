@@ -8,17 +8,11 @@ let request = inBrowser() ?
   require('request');
 
 
-let ProtoBuf = require("protobufjs");
-let syncProto = require('./sync.proto');
-let root = ProtoBuf.loadProto(syncProto).build('sync_pb');
+let root = require("protobufjs").loadProto(require('./sync.proto')).build('sync_pb');
 
-let db = require('./db');
 let config = require('./config');
 
-
-const url = 'https://clients4.google.com/chrome-sync/command';
-
-function fillSyncState(clientToServerMessage, db) {
+function fillRequestFromDatabase(clientToServerMessage, db) {
   let syncState = db.syncState;
   if(syncState.server_chips) {
     clientToServerMessage.bag_of_chips = new root.ChipBag({'server_chips': syncState.server_chips});
@@ -29,10 +23,10 @@ function fillSyncState(clientToServerMessage, db) {
   }
 }
 
-function sendRequest(accessToken, body) {
+function baseSendRequest(accessToken, body) {
   return new Promise((resolve, reject) => {
     return request.post({
-        url: url,
+        url: 'https://clients4.google.com/chrome-sync/command',
         qs: {
           'client': 'Google+Chrome',
           'client_id': config.clientId
@@ -76,7 +70,6 @@ function getAccessTokenPromise(accessToken) {
 }
 
 function updateDbFromResponse(db, response) {
-  console.log('got response');
   let decodedClientToServerResponse = root.ClientToServerResponse.decode(response);
   let birthday = decodedClientToServerResponse.store_birthday;
   if (birthday.startsWith('birthday_error')) {
@@ -103,27 +96,23 @@ function updateDbFromResponse(db, response) {
  * Sends the request and processes the response from the chrome sync server.
  * @param accessToken (uses, if supplied, otherwise used the saved one.
  * @param request {Protofuf message} request to be sent
- * @param processor {Function} Processes the response
  * @param db database Used for bag of chips and store birthday
  * @returns Promise
  * @constructor
  */
-function processClientToServerRequest(accessToken, request, processor, db) {
+function sendRequest(accessToken, request, db) {
   return getAccessTokenPromise(accessToken)
     .then(accessToken => {
-      fillSyncState(request, db);
+      fillRequestFromDatabase(request, db);
       let req = new Uint8Array(request.toArrayBuffer());
-      return sendRequest(accessToken, req)
+      return baseSendRequest(accessToken, req)
     })
     .then(response => updateDbFromResponse(db, response))
-    .then(processor)
-    .catch(error => console.log(error));
 }
 
 module.exports = {
-  url: url,
-  processClientToServerRequest: processClientToServerRequest,
+  sendRequest,
   rootProto: root,
-  fillSyncState: fillSyncState, // TODO later on fill it in here.... (+do not export ->not birthday error problem...)
-  db: db // TODO remove later on
+  getAccessTokenPromise,
+  fillRequestFromDatabase
 };
