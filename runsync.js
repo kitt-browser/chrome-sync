@@ -43,7 +43,7 @@ getOpenTabs(accessToken).then(tabs => {
   console.log('(runsync.js) tabs length', tabs.length, 'lasttab url=', tabs[0])
   console.log('********************************');
 }).then(() => {
-	return addOpenTab('http://testpage.com', accessToken);
+	//return addOpenTab('http://testpage.com', accessToken);
 }).then(
 	res => console.log(res)
 );

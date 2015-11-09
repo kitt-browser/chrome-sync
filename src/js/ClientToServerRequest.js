@@ -29,9 +29,9 @@ function fillSyncState(clientToServerMessage, db) {
   }
 }
 
-function sendAuthorizedHttpRequest(accessToken, body) {
-  return new Promise(function(resolve, reject) {
-      return request.post({
+function sendRequest(accessToken, body) {
+  return new Promise((resolve, reject) => {
+    return request.post({
         url: url,
         qs: {
           'client': 'Google+Chrome',
@@ -46,11 +46,14 @@ function sendAuthorizedHttpRequest(accessToken, body) {
         body: body
       }, (error, response, body) => {
       let stringBody = body.toString();
-      if (stringBody.includes('<TITLE>Unauthorized</TITLE>')) {
-        reject('401 Unauthorized (probably outdated access token)')
-      }
-      if (stringBody.includes('<TITLE>Bad Request</TITLE>')) {
-        reject('400 Bad Request (probably wrong format of the input)')
+      if (stringBody.length < 10) {
+        if (body[1]== 145) {
+          reject('401 Unauthorized (probably outdated access token)') ;
+        } else if (body[1] == 144) {
+          reject('400 Bad Request (probably wrong format of the input)');
+        } else {
+          reject('Suspiciously short response.');
+        }
       }
 
       if (!error) {
@@ -72,6 +75,30 @@ function getAccessTokenPromise(accessToken) {
   }
 }
 
+function updateDbFromResponse(db, response) {
+  console.log('got response');
+  let decodedClientToServerResponse = root.ClientToServerResponse.decode(response);
+  let birthday = decodedClientToServerResponse.store_birthday;
+  if (birthday.startsWith('birthday_error')) {
+    throw new Error('Birthday error: probably you authorized the tokens under different Google account from which you are sending requests.');
+  }
+  let new_chips = decodedClientToServerResponse.new_bag_of_chips;
+  if (new_chips) {
+    new_chips = new_chips.server_chips;
+  }
+  if (!db.syncState.server_chips || new_chips) {
+    db.syncState.server_chips = new_chips;
+  }
+
+  if (!db.syncState.store_birthday || birthday) {
+    console.log(birthday);
+    db.syncState.store_birthday = birthday
+  }
+  console.log('@@@@@@ bday',  db.syncState.store_birthday);
+
+  return decodedClientToServerResponse;
+}
+
 /**
  * Sends the request and processes the response from the chrome sync server.
  * @param accessToken (uses, if supplied, otherwise used the saved one.
@@ -86,31 +113,9 @@ function processClientToServerRequest(accessToken, request, processor, db) {
     .then(accessToken => {
       fillSyncState(request, db);
       let req = new Uint8Array(request.toArrayBuffer());
-      return sendAuthorizedHttpRequest(accessToken, req)
+      return sendRequest(accessToken, req)
     })
-    .then(response => {
-      console.log('got response');
-      let decodedClientToServerResponse = root.ClientToServerResponse.decode(response);
-      let birthday = decodedClientToServerResponse.store_birthday;
-      if (birthday.startsWith('birthday_error')) {
-        throw new Error('Birthday error: probably you authorized the tokens under different Google account from which you are sending requests.');
-      }
-      let new_chips = decodedClientToServerResponse.new_bag_of_chips;
-      if (new_chips) {
-        new_chips = new_chips.server_chips;
-      }
-      if (!db.syncState.server_chips || new_chips) {
-        db.syncState.server_chips = new_chips;
-      }
-
-      if (!db.syncState.store_birthday || birthday) {
-        console.log(birthday);
-        db.syncState.store_birthday = birthday
-      }
-      console.log('@@@@@@ bday',  db.syncState.store_birthday);
-
-      return decodedClientToServerResponse;
-    })
+    .then(response => updateDbFromResponse(db, response))
     .then(processor)
     .catch(error => console.log(error));
 }
