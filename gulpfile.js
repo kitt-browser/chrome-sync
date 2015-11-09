@@ -20,7 +20,7 @@ function createBrowserifyBundle(srcPath) {
     .bundle()
     .on('error', e => {
       console.error(e);
-      this.emit('end');
+      bundler.emit('end');
     })
     .pipe(source(srcPath))
     .pipe(gulp.dest('./build'));

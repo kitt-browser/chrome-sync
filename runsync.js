@@ -1,4 +1,4 @@
-#!/usr/bin/env iojs --harmony --harmony_arrow_functions --harmony_object_literals
+#!/usr/local/bin/node
 
 // This file is used for testing the openTabs and addNewTab commands.
 // you should run it as |./runsync.js --token=<your_access_token>|
