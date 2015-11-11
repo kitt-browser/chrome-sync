@@ -19,6 +19,17 @@ function getAPITokens(authorizationCode, cb) {
   });
 }
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  switch(message.type) {
+    case 'setAuthorizationCode':
+      getAPITokens(message.code, tokens => {
+        chrome.storage.local.set({ tokens: tokens });
+        sendResponse();
+      });
+      break;
+  }
+});
+
 function updateStoredAccessToken(newAccessToken) {
   chrome.storage.local.get('tokens', (res) => {
     res.tokens.access_token = newAccessToken;
@@ -43,18 +54,6 @@ function refreshAccessToken() {
     });
   });
 }
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  switch(message.type) {
-    case 'setAuthorizationCode':
-      getAPITokens(message.code, tokens => {
-        chrome.storage.local.set({ tokens: tokens });
-        sendResponse();
-      });
-      break;
-  }
-});
-
 
 refreshAccessToken();
 setInterval(refreshAccessToken, 1000* 3600);

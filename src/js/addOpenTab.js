@@ -7,7 +7,7 @@ function BuildUpdateRequest(websiteUrl, db) {
   // in format "rand271398.372016847131440062545931"
   let randomString = 'rand'+(Math.random()*1000000).toString() + Date.now().toString();
 
-  console.log('----', currentTime);
+  //console.log('----current time:', currentTime);
   let request = new clientToServerRequest.rootProto.ClientToServerMessage({
     share: db.getUserShare(),
     message_contents: 'COMMIT',
@@ -19,7 +19,7 @@ function BuildUpdateRequest(websiteUrl, db) {
       },
       entries: [{ // Sync entity, filled like chrome://sync-internals
         //attachment_id: [],
-        //client_defined_unique_tag: 'PKNCGfsKowE0Tu+LjuxPe5C05mY=',//randomString,
+        client_defined_unique_tag: 'BgIfoaozXXxzttZByJ3CpSkamBI=',//randomString,
 
         // 2* whatever
         ctime: currentTime,
@@ -29,7 +29,7 @@ function BuildUpdateRequest(websiteUrl, db) {
         non_unique_name: websiteUrl,
         // it's only 13 digits in comparison to 16 used by chrome, hence the multiplication...
         version: currentTime * 1000,
-        id_string: 'Z:ADqtAZxYtpOdmzFl4Fx/ECWEY2U2kYXteUIX7INS5EMsLOuJNGakPbIrIN44x8+PdrZGsCCjrJvYmxgYGeZjPy0+sX1pxVghog==',
+        id_string: 'Z:ADqtAZxYtpOdmzFl4Fx/ECWEY2U2QU0vEbDvoLmlawkw1wsBvB02WBhnAVI9gU9YiIYWvyORyCk5Lxv4Z3UGsAqFbJ5tPuW9jg==',
         specifics: {
           "session": {
             //"session_tag": "session_syncJnGGyLEoZ3C+9bWCPbO2QQ==",
@@ -39,7 +39,7 @@ function BuildUpdateRequest(websiteUrl, db) {
                   //"timestamp_msec": "1440073418036",
                   "title": "Organizační struktura / Lucie ŠimůnkováHAHAAHA",
                   //"unique_id": 801,
-                  "virtual_url": "http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATTE.HTMLPCAMREPLACE"
+                  "virtual_url": websiteUrl
                 }
               ],
               //"tab_id": 1027,
@@ -52,24 +52,21 @@ function BuildUpdateRequest(websiteUrl, db) {
     }
   });
 
-  //clientToServerRequest.fillRequestFromDatabase(request, db);
+  //clientToServerRequest.fillRequestFromDb(request, db);
   return request;
 }
 
 function updateProcessor(ClientToServerResponseItem) {
-  console.log(ClientToServerResponseItem);
+  console.log('111',ClientToServerResponseItem);
 
-  let commitResponse = ClientToServerResponseItem.commit;
-  console.log(commitResponse);
-
-  return 'processed updateprocessor';
+  return ClientToServerResponseItem;
 }
 
 function addOpenTab(websiteUrl, accessToken) {
   let db = clientToServerRequest.db;
   return clientToServerRequest.sendRequest(accessToken, BuildUpdateRequest(websiteUrl, db), db)
     .then(updateProcessor)
-    .catch(error => console.log(error));
+    .catch(error => console.log('error:',error));
 }
 
 module.exports = addOpenTab;

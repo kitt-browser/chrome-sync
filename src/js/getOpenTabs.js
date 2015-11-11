@@ -75,7 +75,7 @@ function parseOpenTabs(ClientToServerResponseItem) {
 function getOpenTabs(accessToken) {
   return clientToServerRequest.sendRequest(accessToken, BuildSyncRequest(db), db)
     .then(parseOpenTabs)
-    .catch(error => console.log(error));
+    .catch(error => console.error(error));
 }
 
 module.exports = getOpenTabs;

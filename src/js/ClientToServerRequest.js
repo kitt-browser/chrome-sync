@@ -3,17 +3,21 @@ function inBrowser() {
   return typeof window !== 'undefined';
 }
 
+
 let request = inBrowser() ?
   require('./libs/browser-request-yegodz'):
   require('request');
 
+let _ = require('lodash');
+let config = require('./config');
 
 let root = require("protobufjs").loadProto(require('./sync.proto')).build('sync_pb');
 
-let config = require('./config');
 
-function fillRequestFromDatabase(clientToServerMessage, db) {
-  let syncState = db.syncState;
+function fillRequestFromDb(clientToServerMessage, db) {
+  clientToServerMessage.share = db.getUserShare();
+
+    let syncState = db.syncState;
   if(syncState.server_chips) {
     clientToServerMessage.bag_of_chips = new root.ChipBag({'server_chips': syncState.server_chips});
   }
@@ -60,7 +64,7 @@ function baseSendRequest(accessToken, body) {
 }
 
 function getAccessTokenPromise(accessToken) {
-  if (typeof accessToken === 'string') { // for testing
+  if (!_.isEmpty(accessToken)) { // for testing
     return Promise.resolve(accessToken);
   } else {
     return new Promise(function(resolve, reject) {
@@ -70,12 +74,12 @@ function getAccessTokenPromise(accessToken) {
 }
 
 function updateDbFromResponse(db, response) {
-  let decodedClientToServerResponse = root.ClientToServerResponse.decode(response);
-  let birthday = decodedClientToServerResponse.store_birthday;
+  let birthday = response.store_birthday;
   if (birthday.startsWith('birthday_error')) {
     throw new Error('Birthday error: probably you authorized the tokens under different Google account from which you are sending requests.');
   }
-  let new_chips = decodedClientToServerResponse.new_bag_of_chips;
+  let new_chips = response.new_bag_of_chips;
+  console.error('newchips:', response.new_bag_of_chips, 'bday:', response.store_birthday);
   if (new_chips) {
     new_chips = new_chips.server_chips;
   }
@@ -84,12 +88,10 @@ function updateDbFromResponse(db, response) {
   }
 
   if (!db.syncState.store_birthday || birthday) {
-    console.log(birthday);
     db.syncState.store_birthday = birthday
   }
-  console.log('@@@@@@ bday',  db.syncState.store_birthday);
 
-  return decodedClientToServerResponse;
+  return response;
 }
 
 /**
@@ -103,16 +105,28 @@ function updateDbFromResponse(db, response) {
 function sendRequest(accessToken, request, db) {
   return getAccessTokenPromise(accessToken)
     .then(accessToken => {
-      fillRequestFromDatabase(request, db);
+      fillRequestFromDb(request, db);
       let req = new Uint8Array(request.toArrayBuffer());
       return baseSendRequest(accessToken, req)
     })
-    .then(response => updateDbFromResponse(db, response))
+    .then(response => root.ClientToServerResponse.decode(response))
+    .then(d => {
+      //console.error(d);
+      //console.error('\n\n\n');
+      console.error(JSON.stringify(d, (k, v) => {
+        if (k==='data')
+          return 'LONGDATA';
+        else
+          return v;
+      }));
+      return d;
+    })
+    .then(decodedResponse => updateDbFromResponse(db, decodedResponse))
 }
 
 module.exports = {
   sendRequest,
   rootProto: root,
   getAccessTokenPromise,
-  fillRequestFromDatabase
+  fillRequestFromDb
 };
