@@ -91,6 +91,9 @@ function updateDbFromResponse(db, response) {
     db.syncState.store_birthday = birthday
   }
 
+  response.get_updates.new_progress_marker.forEach((marker) => db.updateProgressMarker(marker));
+
+
   return response;
 }
 
@@ -106,18 +109,13 @@ function sendRequest(accessToken, request, db) {
   return getAccessTokenPromise(accessToken)
     .then(accessToken => {
       fillRequestFromDb(request, db);
+      console.error(JSON.stringify(request.toRaw(true, true), (k, v) => k === 'data'? 'LONGDATA': v, '  '));
       let req = new Uint8Array(request.toArrayBuffer());
       return baseSendRequest(accessToken, req)
     })
     .then(response => root.ClientToServerResponse.decode(response))
     .then(d => {
-
-      console.error(JSON.stringify(d, (k, v) => {
-        if (k==='data')
-          return 'LONGDATA';
-        else
-          return v;
-      }, '  '));
+      console.error(JSON.stringify(d, (k, v) => k === 'data'? 'LONGDATA': v, '  '));
       return d;
     })
     .then(decodedResponse => updateDbFromResponse(db, decodedResponse))

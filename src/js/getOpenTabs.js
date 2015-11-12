@@ -5,7 +5,7 @@ let db = require('./db');
 let my_entry; // debug TODO
 
 function InitializeMarker(datatype, db) {
-  var marker = db.getSyncProgress(datatype.data_type_id);
+  var marker = db.getProgressMarker(datatype.data_type_id);
   if (marker) {
     if (marker.notification_hint) {
       datatype.notification_hint = marker.notification_hint;
