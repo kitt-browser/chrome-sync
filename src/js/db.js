@@ -1,9 +1,4 @@
-/**
- * Created by tomasnovella on 7/21/15.
- */
 'use strict';
-
-let ProtoBuf = require('protobufjs');
 
 let db = {
   getUserShare: () => 'tomasn@salsitasoft.com',

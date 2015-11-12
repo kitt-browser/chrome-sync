@@ -112,12 +112,12 @@ function sendRequest(accessToken, request, db) {
     .then(response => root.ClientToServerResponse.decode(response))
     .then(d => {
 
-//      console.error(JSON.stringify(d, (k, v) => {
-//        if (k==='data')
-//          return 'LONGDATA';
-//        else
-//          return v;
-//      }));
+      console.error(JSON.stringify(d, (k, v) => {
+        if (k==='data')
+          return 'LONGDATA';
+        else
+          return v;
+      }, '  '));
       return d;
     })
     .then(decodedResponse => updateDbFromResponse(db, decodedResponse))

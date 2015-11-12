@@ -1,5 +1,6 @@
 'use strict';
 let clientToServerRequest = require('./clientToServerRequest');
+let db = require('./db');
 
 function BuildUpdateRequest(websiteUrl, db) {
   let currentTime = Date.now();
@@ -63,7 +64,6 @@ function updateProcessor(ClientToServerResponseItem) {
 }
 
 function addOpenTab(websiteUrl, accessToken) {
-  let db = clientToServerRequest.db;
   return clientToServerRequest.sendRequest(accessToken, BuildUpdateRequest(websiteUrl, db), db)
     .then(updateProcessor)
     .catch(error => console.log('error:',error));
