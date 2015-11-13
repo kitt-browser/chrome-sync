@@ -79,7 +79,7 @@ function updateDbFromResponse(db, response) {
     throw new Error('Birthday error: probably you authorized the tokens under different Google account from which you are sending requests.');
   }
   let new_chips = response.new_bag_of_chips;
-  console.error('newchips:', response.new_bag_of_chips, 'bday:', response.store_birthday);
+  //console.error('newchips:', response.new_bag_of_chips, 'bday:', response.store_birthday);
   if (new_chips) {
     new_chips = new_chips.server_chips;
   }
@@ -91,12 +91,24 @@ function updateDbFromResponse(db, response) {
     db.syncState.store_birthday = birthday
   }
 
-  response.get_updates.new_progress_marker.forEach((marker) => db.updateProgressMarker(marker));
+  if (response.get_updates) {
+    response.get_updates.new_progress_marker.forEach((marker) => db.updateProgressMarker(marker));
+  }
 
 
   return response;
 }
 
+function _jsonStringify(json) {
+  return JSON.stringify(json, (k, v) => {
+    if (k=== 'data')
+      return 'LONGDATA';
+    if(v===null || v===false)
+      return;
+    return v;
+
+  }, '  ')
+}
 /**
  * Sends the request and processes the response from the chrome sync server.
  * @param accessToken (uses, if supplied, otherwise used the saved one.
@@ -109,13 +121,13 @@ function sendRequest(accessToken, request, db) {
   return getAccessTokenPromise(accessToken)
     .then(accessToken => {
       fillRequestFromDb(request, db);
-      console.error(JSON.stringify(request.toRaw(true, true), (k, v) => k === 'data'? 'LONGDATA': v, '  '));
+      console.error(_jsonStringify(request.toRaw(true, true)));
       let req = new Uint8Array(request.toArrayBuffer());
       return baseSendRequest(accessToken, req)
     })
     .then(response => root.ClientToServerResponse.decode(response))
     .then(d => {
-      console.error(JSON.stringify(d, (k, v) => k === 'data'? 'LONGDATA': v, '  '));
+      console.error(_jsonStringify(d));
       return d;
     })
     .then(decodedResponse => updateDbFromResponse(db, decodedResponse))

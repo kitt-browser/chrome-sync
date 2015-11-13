@@ -58,15 +58,13 @@ function BuildUpdateRequest(websiteUrl, db) {
 }
 
 function updateProcessor(ClientToServerResponseItem) {
-  console.log('111',ClientToServerResponseItem);
-
   return ClientToServerResponseItem;
 }
 
 function addOpenTab(websiteUrl, accessToken) {
   return clientToServerRequest.sendRequest(accessToken, BuildUpdateRequest(websiteUrl, db), db)
     .then(updateProcessor)
-    .catch(error => console.log('error:',error));
+    .catch(error => console.log('Add Open Tab Error:',error));
 }
 
 module.exports = addOpenTab;

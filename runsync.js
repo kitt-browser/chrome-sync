@@ -42,8 +42,10 @@ getOpenTabs(accessToken).then(tabs => {
   console.log('********************************');
   console.log('(runsync.js) tabs length', tabs.length, 'lasttab url=', tabs[0])
   console.log('********************************');
-}).then(() =>
-  addOpenTab('http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATTE.HTMLPCAMREPLACE', accessToken)
+}).then(
+  ()=>
+    //null
+    addOpenTab('http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATTE.HTMLPCAMREPLACE', accessToken)
 ).then(() => getOpenTabs(accessToken));
 
 
