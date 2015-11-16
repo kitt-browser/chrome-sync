@@ -77,4 +77,8 @@ function getOpenTabs(accessToken) {
     .catch(error => console.error(error));
 }
 
-module.exports = {getOpenTabs};
+function getUpdates(accessToken) {
+  return clientToServerRequest.sendRequest(accessToken, BuildGetUpdatesRequest(db), db)
+}
+
+module.exports = {getOpenTabs, getUpdates};

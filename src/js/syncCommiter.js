@@ -42,7 +42,7 @@ function createEntry(websiteUrl) {
     }
   };
 }
-function BuildCommitRequest(entry, db) {
+function BuildCommitRequest(entry) {
   //console.log('----current time:', currentTime);
   let request = new clientToServerRequest.rootProto.ClientToServerMessage({
     message_contents: 'COMMIT',
@@ -65,9 +65,29 @@ function updateProcessor(ClientToServerResponseItem) {
 }
 
 function addOpenTab(websiteUrl, accessToken) {
-  return clientToServerRequest.sendRequest(accessToken, BuildCommitRequest(createEntry(websiteUrl), db), db)
+  return clientToServerRequest.sendRequest(accessToken, BuildCommitRequest(createEntry(websiteUrl)), db)
     .then(updateProcessor)
     .catch(error => console.log('Add Open Tab Error:',error));
 }
 
-module.exports = {addOpenTab};
+function addLinkToEntry(entry, link) {
+  let navigation = {
+    "title": link.title,
+    "virtual_url": link.url
+  };
+  let tab = entry.specifics.session.tab;
+  tab.navigation.push(navigation);
+  tab.current_navigation_index = tab.current_navigation_index + 1;
+
+  return entry;
+}
+
+function commitEntry(accessToken, entry) {
+  return clientToServerRequest.sendRequest(accessToken, BuildCommitRequest(entry), db);
+}
+
+function commitNewLinkToEntry(accessToken, entry, link) {
+  let newEntry = addLinkToEntry(entry, link);
+  return commitEntry(accessToken, newEntry);
+}
+module.exports = {addOpenTab, commitNewLinkToEntry};

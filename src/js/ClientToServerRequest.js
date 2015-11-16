@@ -127,7 +127,7 @@ function sendRequest(accessToken, request, db) {
     })
     .then(response => root.ClientToServerResponse.decode(response))
     .then(d => {
-      console.error(_jsonStringify(d));
+      //console.error(_jsonStringify(d));
       return d;
     })
     .then(decodedResponse => updateDbFromResponse(db, decodedResponse))

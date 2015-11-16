@@ -21,31 +21,27 @@ if (!accessToken) {
   process.exit(1);
 }
 
-// ... old version, obsolete, But I have if in case I checkout to some older commit.
-// let s = require('./src/js/syncRequest');
-//
-// s.GetOpenTabs(accessToken).then(tabs => {
-//   console.log('********************************');
-//   console.log('(runsync.js) tabs length', tabs.length, 'lasttab url=', tabs[0])
-//   console.log('********************************');
-// }).then(function() {
-// 	//return s.addOpenTab('http://testpage.com', accessToken);
-// }).then(
-// 	res => console.log(res)
-// );
-//
+let _ = require('lodash');
 
-let getOpenTabs = require('./src/js/syncGetter').getOpenTabs;
+let syncGetter = require('./src/js/syncGetter');
+let getOpenTabs = syncGetter.getOpenTabs;
+let getUpdates = syncGetter.getUpdates;
+
 let addOpenTab = require('./src/js/syncCommiter').addOpenTab;
+
+let entries;
+getUpdates(accessToken).then((ClientToServerResponseItem) => {
+  entries = ClientToServerResponseItem.get_updates.entries;
+});
 
 getOpenTabs(accessToken).then(tabs => {
   console.log('********************************');
   console.log('(runsync.js) tabs length', tabs.length, 'lasttab url=', tabs[0])
   console.log('********************************');
 }).then(
-  ()=>
-    //null
-    addOpenTab('http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATTE.HTMLPCAMREPLACE', accessToken)
+    // ()=>
+    // null
+    // addOpenTab('http://www.mff.cuni.cz/fakulta/struktura/lide/889MOJUPDATTE.HTMLPCAMREPLACE', accessToken)
 ).then(() => getOpenTabs(accessToken));
 
 
