@@ -45,7 +45,6 @@ function createEntry(websiteUrl) {
 function BuildCommitRequest(entry, db) {
   //console.log('----current time:', currentTime);
   let request = new clientToServerRequest.rootProto.ClientToServerMessage({
-    share: db.getUserShare(),
     message_contents: 'COMMIT',
     commit: {
       //cache_guid: 'random_string',

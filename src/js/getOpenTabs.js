@@ -31,7 +31,6 @@ function BuildGetUpdatesRequest(db) {
   }
 
   let request = new clientToServerRequest.rootProto.ClientToServerMessage({
-    share: db.getUserShare(),
     message_contents: 'GET_UPDATES',
     get_updates: {
       caller_info: {
