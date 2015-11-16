@@ -1,9 +1,9 @@
 let querystring = require('querystring');
 let config = require('./config');
-let clientToServerRequest = require('./clientToServerRequest');
-let url = clientToServerRequest.url;
+let clientToServerRequest = require('./ClientToServerRequest');
+let url = clientToServerRequest.url; //FIXME
 
-let getOpenTabs = require('./getOpenTabs');
+let getOpenTabs = require('./syncGetter').getOpenTabs;
 
 function authentificate() {
   let url = 'https://accounts.google.com/o/oauth2/auth' + '?' + querystring.stringify({

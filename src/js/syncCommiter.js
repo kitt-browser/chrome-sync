@@ -70,4 +70,4 @@ function addOpenTab(websiteUrl, accessToken) {
     .catch(error => console.log('Add Open Tab Error:',error));
 }
 
-module.exports = addOpenTab;
+module.exports = {addOpenTab};

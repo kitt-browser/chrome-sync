@@ -77,4 +77,4 @@ function getOpenTabs(accessToken) {
     .catch(error => console.error(error));
 }
 
-module.exports = getOpenTabs;
+module.exports = {getOpenTabs};

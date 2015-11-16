@@ -35,8 +35,8 @@ if (!accessToken) {
 // );
 //
 
-let getOpenTabs = require('./src/js/getOpenTabs');
-let addOpenTab = require('./src/js/addOpenTab');
+let getOpenTabs = require('./src/js/syncGetter').getOpenTabs;
+let addOpenTab = require('./src/js/syncCommiter').addOpenTab;
 
 getOpenTabs(accessToken).then(tabs => {
   console.log('********************************');
