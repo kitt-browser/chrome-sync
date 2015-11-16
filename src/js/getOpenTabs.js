@@ -25,7 +25,7 @@ function InitializeDataType(db, fieldNumber) {
   return datatype;
 }
 
-function BuildSyncRequest(db) {
+function BuildGetUpdatesRequest(db) {
   if (!db) {
     throw new Exception('user logged out!');
   }
@@ -73,7 +73,7 @@ function parseOpenTabs(ClientToServerResponseItem) {
 }
 
 function getOpenTabs(accessToken) {
-  return clientToServerRequest.sendRequest(accessToken, BuildSyncRequest(db), db)
+  return clientToServerRequest.sendRequest(accessToken, BuildGetUpdatesRequest(db), db)
     .then(parseOpenTabs)
     .catch(error => console.error(error));
 }

@@ -6,7 +6,7 @@
     "buffer": "^3.3.1",
     "jquery": "^2.1.4",
     "long": "^3.0.1",
-    "protocol-buffers": "^3.1.2",
+    "protobufjs": "^4.1.2",
     "request": "^2.58.0",
     "xmlhttprequest": "^1.7.0"
   },
