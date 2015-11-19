@@ -77,8 +77,16 @@ function getOpenTabs(accessToken) {
     .catch(error => console.error(error));
 }
 
+
+function updateSyncEntities(ctsResponse) {
+  let entries = ctsResponse.get_updates.entries;
+  entries.forEach(entry => db.syncEntities[entry.id_string] = entry);
+  return ctsResponse;
+}
+
 function getUpdates(accessToken) {
   return clientToServerRequest.sendRequest(accessToken, BuildGetUpdatesRequest(db), db)
+    .then(updateSyncEntities);
 }
 
 module.exports = {getOpenTabs, getUpdates};

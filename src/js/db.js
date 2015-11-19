@@ -15,7 +15,10 @@ let db = {
 
   getProgressMarker: (DataTypeId) => progressMarkers[DataTypeId],
   updateProgressMarker: (DataTypeProgressMarker) =>
-    progressMarkers[DataTypeProgressMarker.data_type_id] = DataTypeProgressMarker
+    progressMarkers[DataTypeProgressMarker.data_type_id] = DataTypeProgressMarker,
+
+  // syncEntities[<id_string>] = entity
+  syncEntities: []
 };
 
 
