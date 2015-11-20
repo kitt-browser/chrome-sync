@@ -45,7 +45,7 @@ function createEntry(websiteUrl) {
   };
 }
 
-function createNewEmptySyncEntity(specifics) {
+function createNewEmptySyncEntity(name, specifics) {
   let currentTime = Date.now() * 1000;
 
   // in format "rand271398.372016847131440062545931"
@@ -57,7 +57,7 @@ function createNewEmptySyncEntity(specifics) {
     //parent_id_string: '0',
     //parent_id_string: 'Z:ADqtAZy7SBx3aAw4bMqMmgyPux9TG1JJ987uhKdvtU1wFUUoZbTIsWnmLXKHils2naYxig4WvsRZ7ZMvC1eHc5texHwOTNJrLg==',
     version: 0,
-    name: 'ST15i', // TODO just a boilerplate for now
+    name: name,
     position_in_parent: 0,
 
     // 2* whatever
