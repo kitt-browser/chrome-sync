@@ -834,7 +834,12 @@ message SyncEntity {
     optional string non_unique_name = 8;
     optional int64 sync_timestamp = 9;
     optional string server_defined_unique_tag = 10;
-    optional BookmarkData bookmarkdata = 11;
+    optional group BookmarkData = 11 {
+        required bool bookmark_folder = 12;
+        optional string bookmark_url = 13;
+        optional bytes bookmark_favicon = 14;
+    }
+
     optional int64 position_in_parent = 15;
     optional string insert_after_item_id = 16;
     optional bool deleted = 18 [default = false];
@@ -846,12 +851,6 @@ message SyncEntity {
     optional bytes ordinal_in_parent = 24;
     optional UniquePosition unique_position = 25;
     repeated AttachmentIdProto attachment_id = 26;
-
-    message BookmarkData {
-        required bool bookmark_folder = 12;
-        optional string bookmark_url = 13;
-        optional bytes bookmark_favicon = 14;
-    }
 }
 
 message ChromiumExtensionsActivity {
@@ -980,6 +979,19 @@ message GetCrashInfoResponse {
 }
 
 message CommitResponse {
+    repeated group EntryResponse = 1 {
+        required ResponseType response_type = 2;
+        optional string id_string = 3;
+        optional string parent_id_string = 4;
+        optional int64 position_in_parent = 5;
+        optional int64 version = 6;
+        optional string name = 7;
+        optional string non_unique_name = 8;
+        optional string error_message = 9;
+        optional int64 mtime = 10;
+    }
+
+
     enum ResponseType {
         SUCCESS = 1;
         CONFLICT = 2;
@@ -987,42 +999,6 @@ message CommitResponse {
         INVALID_MESSAGE = 4;
         OVER_QUOTA = 5;
         TRANSIENT_ERROR = 6;
-    }
-
-    repeated group EntryResponse = 1 {
-      required ResponseType response_type = 2;
-
-      // Sync servers may also return a new ID for an existing item, indicating
-      // a new entry's been created to hold the data the client's sending up.
-      optional string id_string = 3;
-
-      // should be filled if our parent was assigned a new ID.
-      optional string parent_id_string = 4;
-
-      // This value is the same as the position_in_parent value returned within
-      // the SyncEntity message in GetUpdatesResponse.  There was a time when the
-      // client would attempt to honor this position, but nowadays the server
-      // should ensure it is no different from the position_in_parent sent up in
-      // the commit request and the client should not read it.
-      optional int64 position_in_parent = 5;
-
-      // The item's current version.
-      optional int64 version = 6;
-
-      // Allows the server to move-aside an entry as it's being committed.
-      // This name is the same as the name field returned within the SyncEntity
-      // message in GetUpdatesResponse.
-      optional string name = 7;
-
-      // This name is the same as the non_unique_name field returned within the
-      // SyncEntity message in GetUpdatesResponse.
-      optional string non_unique_name = 8;
-
-      optional string error_message = 9;
-
-      // Last modification time (in java time milliseconds).  Allows the server
-      // to override the client-supplied mtime during a commit operation.
-      optional int64 mtime = 10;
     }
 }
 
