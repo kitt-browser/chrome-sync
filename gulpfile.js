@@ -28,7 +28,7 @@ function createBrowserifyBundle(srcPath) {
 }
 
 gulp.task('mochaTest', () => {
-  return gulp.src('./test/**/*.spec.js')
+  return gulp.src('./src/js/**/*.spec.js')
     //.pipe(createBrowserifyBundle)
 
     //.pipe(babel())

@@ -18,7 +18,12 @@ let db = {
     progressMarkers[DataTypeProgressMarker.data_type_id] = DataTypeProgressMarker,
 
   // syncEntities[<id_string>] = entity
-  syncEntities: []
+  syncEntities: [],
+
+  clientName: 'Kitt',
+  // this tag distinguishes every browser, session. For kitt, let's keep this one
+  session_tag: "session_sync123-456789"
+
 };
 
 
