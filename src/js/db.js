@@ -22,7 +22,7 @@ let db = {
 
   clientName: 'Kitt',
   // this tag distinguishes every browser, session. For kitt, let's keep this one
-  session_tag: "session_sync123-456789"
+  sessionTag: "session_sync123-456789"
 
 };
 
