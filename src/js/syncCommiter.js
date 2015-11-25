@@ -42,8 +42,8 @@ function _createHeaderSpecifics(db) {
   };
 }
 
-function appendRecordsToHeader(headerEntry, tabId, windowId) {
-  let windows = headerEntry.specifics.session.header.window;
+function appendRecordsToHeader(header, tabId, windowId) {
+  let windows = header.specifics.session.header.window;
   let window = _.find(windows, {window_id: windowId});
   if (!window) {
     let emptyWindow = {
@@ -62,7 +62,7 @@ function appendRecordsToHeader(headerEntry, tabId, windowId) {
     window.selected_tab_index = window.tab.length - 1;
   }
 
-  return headerEntry;
+  return header;
 }
 function createHeader(db) {
   return _createSyncEntity(db, _createHeaderSpecifics(db));
@@ -126,8 +126,8 @@ function createEntriesForAddedNavigation(db, tabId, windowId, navigation) {
   return header? [header, tab] : [tab];
 }
 
-// TODO: the sync commiter real part. The rest is somehting like: entry creator, modifyer
-function BuildCommitRequest(entries) {
+// TODO: the sync commiter real part. The rest is somehting like: entry creator, modifyier
+function buildCommitRequest(entries) {
   //console.log('----current time:', currentTime);
   let request = new clientToServerRequest.rootProto.ClientToServerMessage({
     message_contents: 'COMMIT',
@@ -141,22 +141,21 @@ function BuildCommitRequest(entries) {
     }
   });
 
-  //clientToServerRequest.fillRequestFromDb(request, db);
   return request;
 }
 
 function commitEntry(accessToken, entryEntries) {
   let entries = _.isArray(entryEntries)? entryEntries : [entryEntries];
-  return clientToServerRequest.sendRequest(accessToken, BuildCommitRequest(entries), db);
+  return clientToServerRequest.sendRequest(accessToken, buildCommitRequest(entries), db);
 }
 
 module.exports = {
-  createHeader,
-  appendRecordsToHeader,
-  findOrCreateHeader,
+  //createHeader,
+  //appendRecordsToHeader,
+  //findOrCreateHeader,
 
-  createTab,
-  appendNavigationToTab,
+  //createTab,
+  //appendNavigationToTab,
 
   createEntriesForAddedNavigation,
   commitEntry
