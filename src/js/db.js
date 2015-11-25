@@ -26,7 +26,7 @@ let db = {
     progressMarkers[DataTypeProgressMarker.data_type_id] = DataTypeProgressMarker,
 
   // syncEntities[<id_string>] = entity
-  syncEntities: []
+  syncEntities: {}
 };
 
 
