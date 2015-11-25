@@ -12,9 +12,9 @@ let windowId = 150;
 
 function e(json) {console.log(JSON.stringify(json, null, ' '));}
 
-describe('module for creating and modifying HEADER sync entities(createHeaderSyncEntity, appendRecordsToHeader)', function() {
+describe('module for creating and modifying HEADER sync entities(createHeader, appendRecordsToHeader)', function() {
   it('should create empty entity', function() {
-    let entry = syncCommiter.createHeaderSyncEntity(db);
+    let entry = syncCommiter.createHeader(db);
     assert.ok(typeof entry.id_string === 'string');
     delete entry.id_string;
 
@@ -38,7 +38,7 @@ describe('module for creating and modifying HEADER sync entities(createHeaderSyn
   });
 
   it('should test adding new window', function() {
-    let entry = syncCommiter.createHeaderSyncEntity(db, tabId, windowId);
+    let entry = syncCommiter.createHeader(db, tabId, windowId);
     let headerEntry = syncCommiter.appendRecordsToHeader(entry, tabId, windowId);
     delete headerEntry.id_string;
     assert.deepEqual(headerEntry, {
@@ -69,7 +69,7 @@ describe('module for creating and modifying HEADER sync entities(createHeaderSyn
   });
 
   it('should test adding new tab to existing window', function() {
-    let headerEntry = syncCommiter.createHeaderSyncEntity(db, tabId, windowId);
+    let headerEntry = syncCommiter.createHeader(db, tabId, windowId);
     headerEntry = syncCommiter.appendRecordsToHeader(headerEntry, tabId, windowId);
     headerEntry = syncCommiter.appendRecordsToHeader(headerEntry, 51, windowId);
     delete headerEntry.id_string;
@@ -102,7 +102,7 @@ describe('module for creating and modifying HEADER sync entities(createHeaderSyn
   });
 
   it('should prevent against duplicity when adding the same tab', function() {
-    let headerEntry = syncCommiter.createHeaderSyncEntity(db, tabId, windowId);
+    let headerEntry = syncCommiter.createHeader(db, tabId, windowId);
     headerEntry = syncCommiter.appendRecordsToHeader(headerEntry, tabId, windowId);
     headerEntry = syncCommiter.appendRecordsToHeader(headerEntry, 51, windowId);
     headerEntry = syncCommiter.appendRecordsToHeader(headerEntry, 51, windowId);
@@ -138,9 +138,9 @@ describe('module for creating and modifying HEADER sync entities(createHeaderSyn
   });
 });
 
-describe('module for creating and modifying TAB sync entities(createTabSyncEntity, appendNavigationToTab)', function() {
+describe('module for creating and modifying TAB sync entities(createTab, appendNavigationToTab)', function() {
   it('should create valid empty tab entity', function() {
-    let tabEntry = syncCommiter.createTabSyncEntity(db, tabId, windowId);
+    let tabEntry = syncCommiter.createTab(db, tabId, windowId);
     assert.ok(typeof tabEntry.id_string === 'string');
     delete tabEntry.id_string;
     delete tabEntry.specifics.session.tab_node_id;
@@ -166,7 +166,7 @@ describe('module for creating and modifying TAB sync entities(createTabSyncEntit
   });
 
   it('should check adding new navigation', function() {
-    let tabEntry = syncCommiter.createTabSyncEntity(db, tabId, windowId);
+    let tabEntry = syncCommiter.createTab(db, tabId, windowId);
     delete tabEntry.id_string;
     delete tabEntry.specifics.session.tab_node_id;
 
