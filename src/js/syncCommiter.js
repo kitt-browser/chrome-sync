@@ -45,6 +45,8 @@ function createEntry(websiteUrl) {
   };
 }
 
+
+
 function _createSyncEntity(db, specifics) {
   let currentTime = Date.now() * 1000;
 
@@ -66,6 +68,50 @@ function _createSyncEntity(db, specifics) {
 }
 
 
+// ------------------- header sync entities
+function _createHeaderSpecifics(db) {
+  return {
+    session: {
+      session_tag: db.sessionTag,
+      tab_node_id: -1,
+      header: {
+        window: [],
+        client_name: db.clientName,
+        device_type: 'TYPE_PHONE'
+      }
+
+    }
+  };
+}
+
+function appendRecordsToHeader(headerEntry, tabId, windowId) {
+  let windows = headerEntry.specifics.session.header.window;
+  let window = _.find(windows, {window_id: windowId});
+  if (!window) {
+    let emptyWindow = {
+      window_id: windowId,
+      selected_tab_index: -1,
+      browser_type: "TYPE_TABBED",
+      tab: []
+    };
+    windows.push(emptyWindow);
+    window = windows[windows.length - 1];
+  }
+
+  let containsTab = _.contains(window.tab, tabId);
+  if (!containsTab) {
+    window.tab.push(tabId);
+    window.selected_tab_index = window.tab.length - 1;
+  }
+
+  return headerEntry;
+}
+function createHeaderSyncEntity(db) {
+  return _createSyncEntity(db, _createHeaderSpecifics(db));
+}
+
+
+// tab sync entities
 function _createTabSpecifics(db, tabId, windowId) {
   return {
     session: {
@@ -82,34 +128,22 @@ function _createTabSpecifics(db, tabId, windowId) {
   };
 }
 
-
-function _createHeaderSpecifics(db, windowId) {
-  return {
-    session: {
-      session_tag: db.sessionTag,
-      tab_node_id: -1,
-      header: {
-        window: [{
-          window_id: windowId,
-          selected_tab_index: -1,
-          "browser_type": "TYPE_TABBED",
-          tab: []
-        }],
-        client_name: db.clientName,
-        device_type: 'TYPE_PHONE'
-      }
-
-    }
-  };
-}
-
-
 function createTabSyncEntity(db, tabId, windowId) {
   return _createSyncEntity(db, _createTabSpecifics(db, tabId, windowId));
 }
 
-function createHeaderSyncEntity(db, windowId) {
-  return _createSyncEntity(db, _createHeaderSpecifics(db, windowId));
+
+
+function appendNavigationToTab(entry, navigation) {
+  navigation = {
+    "title": navigation.title,
+    "virtual_url": navigation.url
+  };
+  let tab = entry.specifics.session.tab;
+  tab.navigation.push(navigation);
+  tab.current_navigation_index = tab.current_navigation_index + 1;
+
+  return entry;
 }
 
 function BuildCommitRequest(entries) {
@@ -130,26 +164,9 @@ function BuildCommitRequest(entries) {
   return request;
 }
 
-function updateProcessor(ClientToServerResponseItem) {
-  return ClientToServerResponseItem;
-}
-
 function addOpenTab(websiteUrl, accessToken) {
   return clientToServerRequest.sendRequest(accessToken, BuildCommitRequest(createEntry(websiteUrl)), db)
-    .then(updateProcessor)
     .catch(error => console.log('Add Open Tab Error:',error));
-}
-
-function addLinkToEntry(entry, link) {
-  let navigation = {
-    "title": link.title,
-    "virtual_url": link.url
-  };
-  let tab = entry.specifics.session.tab;
-  tab.navigation.push(navigation);
-  tab.current_navigation_index = tab.current_navigation_index + 1;
-
-  return entry;
 }
 
 function commitEntry(accessToken, entryEntries) {
@@ -157,8 +174,4 @@ function commitEntry(accessToken, entryEntries) {
   return clientToServerRequest.sendRequest(accessToken, BuildCommitRequest(entries), db);
 }
 
-function commitNewLinkToEntry(accessToken, entry, link) {
-  let newEntry = addLinkToEntry(entry, link);
-  return commitEntry(accessToken, newEntry);
-}
-module.exports = {addOpenTab, commitNewLinkToEntry, addLinkToEntry, createTabSyncEntity,createHeaderSyncEntity, commitEntry};
+module.exports = {addOpenTab, appendRecordsToHeader, appendNavigationToTab, createTabSyncEntity,createHeaderSyncEntity, commitEntry};

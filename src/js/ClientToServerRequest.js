@@ -15,7 +15,7 @@ let root = require("protobufjs").loadProto(require('./sync.proto')).build('sync_
 
 
 function fillRequestFromDb(clientToServerMessage, db) {
-  clientToServerMessage.share = db.getUserShare();
+  clientToServerMessage.share = db.userShare;
 
     let syncState = db.syncState;
   if(syncState.server_chips) {
