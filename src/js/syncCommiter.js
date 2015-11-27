@@ -42,7 +42,7 @@ function _createHeaderSpecifics(db) {
   };
 }
 
-function appendRecordsToHeader(header, tabId, windowId) {
+function _appendRecordsToHeader(header, tabId, windowId) {
   let windows = header.specifics.session.header.window;
   let window = _.find(windows, {window_id: windowId});
   if (!window) {
@@ -64,14 +64,14 @@ function appendRecordsToHeader(header, tabId, windowId) {
 
   return header;
 }
-function createHeader(db) {
+function _createHeader(db) {
   return _createSyncEntity(db, _createHeaderSpecifics(db));
 }
 
-function findOrCreateHeader(db) { // TODO: uses two different databases... (constants & records)
+function _findOrCreateHeader(db) { // TODO: uses two different databases... (constants & records)
   let header = entriesManager.findHeader();
   if (!header) {
-    header = createHeader(db);
+    header = _createHeader(db);
   }
   return header;
 }
@@ -93,13 +93,13 @@ function _createTabSpecifics(db, tabId, windowId) {
   };
 }
 
-function createTab(db, tabId, windowId) {
+function _createTab(db, tabId, windowId) {
   return _createSyncEntity(db, _createTabSpecifics(db, tabId, windowId));
 }
 
 
 
-function appendNavigationToTab(entry, navigation) {
+function _appendNavigationToTab(entry, navigation) {
   navigation = {
     "title": navigation.title,
     "virtual_url": navigation.url
@@ -116,18 +116,18 @@ function createEntriesForAddedNavigation(db, tabId, windowId, navigation) {
 
   let tab = entriesManager.findTab(tabId, windowId);
   if (!tab) { // no such tab exists. Create the tab + add record to the header for the tab
-    header = findOrCreateHeader(db);
-    header = appendRecordsToHeader(header, tabId, windowId);
+    header = _findOrCreateHeader(db);
+    header = _appendRecordsToHeader(header, tabId, windowId);
     tab = createTab(db, tabId, windowId);
   }
 
-  tab = appendNavigationToTab(tab, navigation);
+  tab = _appendNavigationToTab(tab, navigation);
 
   return header? [header, tab] : [tab];
 }
 
 // TODO: the sync commiter real part. The rest is somehting like: entry creator, modifyier
-function buildCommitRequest(entries) {
+function _buildCommitRequest(entries) {
   //console.log('----current time:', currentTime);
   let request = new clientToServerRequest.rootProto.ClientToServerMessage({
     message_contents: 'COMMIT',
@@ -146,16 +146,16 @@ function buildCommitRequest(entries) {
 
 function commitEntry(accessToken, entryEntries) {
   let entries = _.isArray(entryEntries)? entryEntries : [entryEntries];
-  return clientToServerRequest.sendRequest(accessToken, buildCommitRequest(entries), db);
+  return clientToServerRequest.sendRequest(accessToken, _buildCommitRequest(entries), db);
 }
 
 module.exports = {
-  //createHeader,
-  //appendRecordsToHeader,
-  //findOrCreateHeader,
+  _createHeader,
+  _appendRecordsToHeader,
+  _findOrCreateHeader,
 
-  //createTab,
-  //appendNavigationToTab,
+  _createTab,
+  _appendNavigationToTab,
 
   createEntriesForAddedNavigation,
   commitEntry

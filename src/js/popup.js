@@ -1,7 +1,6 @@
 let querystring = require('querystring');
 let config = require('./config');
-let clientToServerRequest = require('./ClientToServerRequest');
-let url = clientToServerRequest.url; //FIXME
+let url = config.syncServerEndpoint;
 
 let getOpenTabs = require('./syncGetter').getOpenTabs;
 
@@ -24,11 +23,11 @@ function getAllCookiesPromise(obj) {
 }
 
 function deleteCookiesPromise(cookiesToDelete) {
-  let promisesPerCookie = cookiesToDelete.map( cookie => {
-    new Promise(function (resolve, reject) {
-      chrome.cookies.remove({url: url, name: cookie.name}, resolve);
-    })
-  });
+  console.log('I should delete folloowign cookies' + cookiesToDelete);
+
+  let promisesPerCookie = cookiesToDelete.map( cookie =>
+    new Promise((resolve, reject) => chrome.cookies.remove({url: url, name: cookie.name}, resolve))
+  );
   return Promise.all(promisesPerCookie);
 }
 
@@ -52,20 +51,17 @@ function restoreCookiesPromise(cookies) {
 
 function printOpenTabs() {
   document.body.innerHTML += '<br /><br />Open tabs: <br /><br />';
-  var deletedCookies;
-  getAllCookiesPromise({url:url})
-    .then(cookies => {
-      deletedCookies = cookies;
-      return cookies;
-    })
-    .then(deleteCookiesPromise)
-    .then(getOpenTabs)
-    .then(openTabs => {
-      openTabs.slice(0,5).forEach(tab => {
-        document.body.innerHTML += tab + '\n<br />';
-      });
-    })
-    .then(() => {restoreCookiesPromise(deletedCookies)} );
+  var deletedCookies = getAllCookiesPromise({url:url});
+
+  deletedCookies
+  .then(deleteCookiesPromise)
+  .then(getOpenTabs)
+  .then(openTabs => {
+    openTabs.slice(0,5).forEach(tab => {
+      document.body.innerHTML += tab + '\n<br />';
+    });
+  })
+  .then(() => deletedCookies.then(restoreCookiesPromise));
 }
 
 function main() {

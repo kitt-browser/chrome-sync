@@ -30,7 +30,7 @@ function fillRequestFromDb(clientToServerMessage, db) {
 function baseSendRequest(accessToken, body) {
   return new Promise((resolve, reject) => {
     return request.post({
-        url: 'https://clients4.google.com/chrome-sync/command',
+        url: config.syncServerEndpoint,
         qs: {
           'client': 'Google+Chrome',
           'client_id': config.clientId

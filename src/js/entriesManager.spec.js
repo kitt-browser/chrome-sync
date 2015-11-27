@@ -76,12 +76,15 @@ let db_mock = {
   }
 };
 
-entriesManager.init(db_mock);
 
 function e(json) {console.log(JSON.stringify(json, null, ' '));}
 
 
 describe('module for finding entities in the database', function() {
+  before(() => {
+    entriesManager.init(db_mock);
+  });
+
   let tabId = 50;
   let windowId = 150;
 

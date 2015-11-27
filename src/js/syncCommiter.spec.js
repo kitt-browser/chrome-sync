@@ -12,9 +12,9 @@ let windowId = 150;
 
 function e(json) {console.log(JSON.stringify(json, null, ' '));}
 
-describe('module for creating and modifying HEADER sync entities(createHeader, appendRecordsToHeader)', function() {
+describe('module for creating and modifying HEADER sync entities(_createHeader, _appendRecordsToHeader)', function() {
   it('should create empty entity', function() {
-    let entry = syncCommiter.createHeader(db);
+    let entry = syncCommiter._createHeader(db);
     assert.ok(typeof entry.id_string === 'string');
     delete entry.id_string;
 
@@ -38,8 +38,8 @@ describe('module for creating and modifying HEADER sync entities(createHeader, a
   });
 
   it('should test adding new window', function() {
-    let entry = syncCommiter.createHeader(db, tabId, windowId);
-    let headerEntry = syncCommiter.appendRecordsToHeader(entry, tabId, windowId);
+    let entry = syncCommiter._createHeader(db, tabId, windowId);
+    let headerEntry = syncCommiter._appendRecordsToHeader(entry, tabId, windowId);
     delete headerEntry.id_string;
     assert.deepEqual(headerEntry, {
       "version": 0,
@@ -69,9 +69,9 @@ describe('module for creating and modifying HEADER sync entities(createHeader, a
   });
 
   it('should test adding new tab to existing window', function() {
-    let headerEntry = syncCommiter.createHeader(db, tabId, windowId);
-    headerEntry = syncCommiter.appendRecordsToHeader(headerEntry, tabId, windowId);
-    headerEntry = syncCommiter.appendRecordsToHeader(headerEntry, 51, windowId);
+    let headerEntry = syncCommiter._createHeader(db, tabId, windowId);
+    headerEntry = syncCommiter._appendRecordsToHeader(headerEntry, tabId, windowId);
+    headerEntry = syncCommiter._appendRecordsToHeader(headerEntry, 51, windowId);
     delete headerEntry.id_string;
 
     assert.deepEqual(headerEntry, {
@@ -102,11 +102,11 @@ describe('module for creating and modifying HEADER sync entities(createHeader, a
   });
 
   it('should prevent against duplicity when adding the same tab', function() {
-    let headerEntry = syncCommiter.createHeader(db, tabId, windowId);
-    headerEntry = syncCommiter.appendRecordsToHeader(headerEntry, tabId, windowId);
-    headerEntry = syncCommiter.appendRecordsToHeader(headerEntry, 51, windowId);
-    headerEntry = syncCommiter.appendRecordsToHeader(headerEntry, 51, windowId);
-    headerEntry = syncCommiter.appendRecordsToHeader(headerEntry, tabId, windowId);
+    let headerEntry = syncCommiter._createHeader(db, tabId, windowId);
+    headerEntry = syncCommiter._appendRecordsToHeader(headerEntry, tabId, windowId);
+    headerEntry = syncCommiter._appendRecordsToHeader(headerEntry, 51, windowId);
+    headerEntry = syncCommiter._appendRecordsToHeader(headerEntry, 51, windowId);
+    headerEntry = syncCommiter._appendRecordsToHeader(headerEntry, tabId, windowId);
 
     delete headerEntry.id_string;
 
@@ -138,9 +138,9 @@ describe('module for creating and modifying HEADER sync entities(createHeader, a
   });
 });
 
-describe('module for creating and modifying TAB sync entities(createTab, appendNavigationToTab)', function() {
+describe('module for creating and modifying TAB sync entities(_createTab, appendNavigationToTab)', function() {
   it('should create valid empty tab entity', function() {
-    let tabEntry = syncCommiter.createTab(db, tabId, windowId);
+    let tabEntry = syncCommiter._createTab(db, tabId, windowId);
     assert.ok(typeof tabEntry.id_string === 'string');
     delete tabEntry.id_string;
     delete tabEntry.specifics.session.tab_node_id;
@@ -166,12 +166,12 @@ describe('module for creating and modifying TAB sync entities(createTab, appendN
   });
 
   it('should check adding new navigation', function() {
-    let tabEntry = syncCommiter.createTab(db, tabId, windowId);
+    let tabEntry = syncCommiter._createTab(db, tabId, windowId);
     delete tabEntry.id_string;
     delete tabEntry.specifics.session.tab_node_id;
 
     let navigation = {title: 'Hello', url: 'http://google.com/hello'};
-    let tabEntryWithAddedNavigation = syncCommiter.appendNavigationToTab(tabEntry, navigation);
+    let tabEntryWithAddedNavigation = syncCommiter._appendNavigationToTab(tabEntry, navigation);
     assert.deepEqual(tabEntryWithAddedNavigation, {
       "version": 0,
       "name": "Kitt",
@@ -196,7 +196,7 @@ describe('module for creating and modifying TAB sync entities(createTab, appendN
     });
 
     navigation = {title: 'World', url: 'http://google.com/world'};
-    assert.deepEqual(syncCommiter.appendNavigationToTab(tabEntryWithAddedNavigation, navigation), {
+    assert.deepEqual(syncCommiter._appendNavigationToTab(tabEntryWithAddedNavigation, navigation), {
       "version": 0,
       "name": "Kitt",
       "position_in_parent": 0,
