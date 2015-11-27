@@ -4,8 +4,7 @@ let db = require('./db');
 let Long = require('long');
 let _ = require('lodash');
 
-let entriesManager = require('./entriesManager');
-entriesManager.init(db);
+let entriesManagerFactory = require('./entriesManager');
 
 function _createSyncEntity(db, specifics) {
   //let currentTime = Date.now() * 1000;
@@ -68,14 +67,6 @@ function _createHeader(db) {
   return _createSyncEntity(db, _createHeaderSpecifics(db));
 }
 
-function _findOrCreateHeader(db) { // TODO: uses two different databases... (constants & records)
-  let header = entriesManager.findHeader();
-  if (!header) {
-    header = _createHeader(db);
-  }
-  return header;
-}
-
 // ------------------- tab sync entities
 function _createTabSpecifics(db, tabId, windowId) {
   return {
@@ -112,18 +103,21 @@ function _appendNavigationToTab(entry, navigation) {
 }
 
 function createEntriesForAddedNavigation(db, tabId, windowId, navigation) {
-  let header;
+  let entriesManager = entriesManagerFactory(db);
 
   let tab = entriesManager.findTab(tabId, windowId);
   if (!tab) { // no such tab exists. Create the tab + add record to the header for the tab
-    header = _findOrCreateHeader(db);
-    header = _appendRecordsToHeader(header, tabId, windowId);
-    tab = createTab(db, tabId, windowId);
+    tab = _createTab(db, tabId, windowId);
   }
-
   tab = _appendNavigationToTab(tab, navigation);
 
-  return header? [header, tab] : [tab];
+  let header = _.cloneDeep(entriesManager.findHeader());
+  if (!header) {
+    header = _createHeader(db);
+  }
+  header = _appendRecordsToHeader(header, tabId, windowId);
+
+  return tab? [tab] : [header, tab];
 }
 
 // TODO: the sync commiter real part. The rest is somehting like: entry creator, modifyier
@@ -152,7 +146,6 @@ function commitEntry(accessToken, entryEntries) {
 module.exports = {
   _createHeader,
   _appendRecordsToHeader,
-  _findOrCreateHeader,
 
   _createTab,
   _appendNavigationToTab,

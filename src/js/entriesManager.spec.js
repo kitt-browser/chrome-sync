@@ -2,8 +2,6 @@
 let assert = require('assert');
 let _ = require('lodash');
 
-let entriesManager = require('./entriesManager');
-
 let db_mock = {
   clientName: 'Kitt',
   sessionTag: "session_sync123-456789",
@@ -76,15 +74,12 @@ let db_mock = {
   }
 };
 
+let entriesManager = require('./entriesManager')(db_mock);
 
 function e(json) {console.log(JSON.stringify(json, null, ' '));}
 
 
 describe('module for finding entities in the database', function() {
-  before(() => {
-    entriesManager.init(db_mock);
-  });
-
   let tabId = 50;
   let windowId = 150;
 

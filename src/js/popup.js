@@ -51,9 +51,9 @@ function restoreCookiesPromise(cookies) {
 
 function printOpenTabs() {
   document.body.innerHTML += '<br /><br />Open tabs: <br /><br />';
-  var deletedCookies = getAllCookiesPromise({url:url});
+  var allCookies = getAllCookiesPromise({url:url});
 
-  deletedCookies
+  allCookies
   .then(deleteCookiesPromise)
   .then(getOpenTabs)
   .then(openTabs => {
@@ -61,7 +61,7 @@ function printOpenTabs() {
       document.body.innerHTML += tab + '\n<br />';
     });
   })
-  .then(() => deletedCookies.then(restoreCookiesPromise));
+  .then(() => allCookies.then(restoreCookiesPromise));
 }
 
 function main() {
