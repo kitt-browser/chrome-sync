@@ -67,10 +67,10 @@ gulp.task('watch', () => {
 });
 
 gulp.task('dist', ['build'], () => {
-  let manifest = require('./src/manifest.json');
-  return gulp.src('./build/**')
+  let manifest = require('./manifest.json');
+  return gulp.src('./build/')
     .pipe(crx({
-      privateKey: fs.readFileSync('./certs/key', 'utf8'),
+      privateKey: fs.readFileSync('./key.pem', 'utf8'),
       filename: manifest.name + '-' + manifest.version + '.crx'
     }))
     .pipe(gulp.dest('./dist'));
