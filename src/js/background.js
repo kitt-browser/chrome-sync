@@ -78,14 +78,14 @@ chrome.webRequest.onBeforeSendHeaders.addListener((details) => {
     }
 
     // REMOVE HOST,
-    console.log(details.url); console.log(details)
+    console.log(details.url); console.log(details);
     for (var i = 0; i < details.requestHeaders.length; ++i) {
       if (details.requestHeaders[i].name === 'Accept') {
-        details.requestHeaders.value= 'text/html,text/FOOBAR;q=0.9';
+        details.requestHeaders[i].value= 'text/html,text/FOOBAR;q=0.9';
       }
 
       if (details.requestHeaders[i].name === 'User-Agent') {
-        details.requestHeaders.splice(i, 1);
+        details.requestHeaders[i].splice(i, 1);
         break;
       }
     }
