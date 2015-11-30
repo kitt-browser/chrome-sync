@@ -27,13 +27,16 @@ function createBrowserifyBundle(srcPath) {
   };
 }
 
-gulp.task('mochaTest', () => {
-  return gulp.src('./src/js/**/*.spec.js')
+gulp.task('mochaTest', (cb) => {
+
+
+  let tests = gulp.src('./src/js/**/*.spec.js')
     //.pipe(createBrowserifyBundle)
 
     //.pipe(babel())
     //.pipe(cat())
-    .pipe(mocha({reporter: 'spec'}));
+    .pipe(mocha({reporter: 'spec'}));//.on('end', function(){cb();});
+  return Promise.resolve(tests);
 });
 
 gulp.task('background', createBrowserifyBundle('js/background.js'));
@@ -67,10 +70,10 @@ gulp.task('watch', () => {
 });
 
 gulp.task('dist', ['build'], () => {
-  let manifest = require('./src/manifest.json');
+  let manifest = require('./manifest.json');
   return gulp.src('./build/**')
     .pipe(crx({
-      privateKey: fs.readFileSync('./certs/key', 'utf8'),
+      privateKey: fs.readFileSync('./build.pem', 'utf8'),
       filename: manifest.name + '-' + manifest.version + '.crx'
     }))
     .pipe(gulp.dest('./dist'));

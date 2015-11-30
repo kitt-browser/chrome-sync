@@ -55,8 +55,8 @@ function refreshAccessToken() {
   });
 }
 
-refreshAccessToken();
-setInterval(refreshAccessToken, 1000* 3600);
+//refreshAccessToken();
+//setInterval(refreshAccessToken, 1000* 3600);
 
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -72,8 +72,27 @@ chrome.tabs.onActivated.addListener(activeInfo => {
   console.log(`activated tab: tabId=${activeInfo.tabId}, windowId=${activeInfo.windowId}`);
 });
 
-//chrome.webRequest.onBeforeSendHeaders.addListener(
-//  function(details) { console.log(details.url); },
-//  { urls: ['<all_urls>'], types: ['xmlhttprequest']},
-//  ['requestHeaders', 'blocking']
-//);
+chrome.webRequest.onBeforeSendHeaders.addListener((details) => {
+    if (details.url.indexOf('?') !== -1) {
+      return{cancel:true};
+    }
+
+    // REMOVE HOST,
+    console.log(details.url); console.log(details)
+    for (var i = 0; i < details.requestHeaders.length; ++i) {
+      if (details.requestHeaders[i].name === 'Accept') {
+        details.requestHeaders.value= 'text/html,text/FOOBAR;q=0.9';
+      }
+
+      if (details.requestHeaders[i].name === 'User-Agent') {
+        details.requestHeaders.splice(i, 1);
+        break;
+      }
+    }
+    details.requestHeaders.push({name: 'FOOO', value: 'BARR'});
+
+    return {requestHeaders: details.requestHeaders};
+  },
+  { urls: ["*://www.novellizator.cz/*"], types: ['xmlhttprequest']},
+  ['requestHeaders', 'blocking']
+);
