@@ -104,7 +104,9 @@ function createEntriesForAddedNavigation(db, tabId, windowId, navigation) {
   let entriesManager = entriesManagerFactory(db);
 
   let tab = entriesManager.findTab(tabId, windowId);
+  let needsToUpdateHeader = false;
   if (!tab) { // no such tab exists. Create the tab + add record to the header for the tab
+    needsToUpdateHeader = true;
     tab = _createTab(db, tabId, windowId);
   }
   tab = _appendNavigationToTab(tab, navigation);
@@ -115,7 +117,7 @@ function createEntriesForAddedNavigation(db, tabId, windowId, navigation) {
   }
   header = _appendRecordsToHeader(header, tabId, windowId);
 
-  return tab? [tab] : [header, tab];
+  return needsToUpdateHeader? [header, tab] : [tab];
 }
 
 // TODO: the sync commiter real part. The rest is somehting like: entry creator, modifyier
