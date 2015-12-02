@@ -1,9 +1,7 @@
 'use strict';
-let clientToServerRequest = require('./clientToServerRequest');
-let db = require('./db');
-let Long = require('long');
 let _ = require('lodash');
 
+let clientToServerRequest = require('./clientToServerRequest');
 let entriesManagerFactory = require('./entriesManager');
 
 function _createSyncEntity(db, specifics) {
@@ -138,7 +136,7 @@ function _buildCommitRequest(entries) {
   return request;
 }
 
-function commitEntry(accessToken, entryEntries) {
+function commitEntry(accessToken, db, entryEntries) {
   let entries = _.isArray(entryEntries)? entryEntries : [entryEntries];
   return clientToServerRequest.sendRequest(accessToken, _buildCommitRequest(entries), db);
 }

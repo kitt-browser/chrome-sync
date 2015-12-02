@@ -1,7 +1,7 @@
 let querystring = require('querystring');
 let config = require('./config');
 let url = config.syncServerEndpoint;
-let db = require('./db');
+let db = require('./db').browserDb('Kitt');
 let getOpenTabs = require('./syncGetter').getOpenTabs;
 
 
@@ -56,7 +56,7 @@ function printOpenTabs() {
 
   allCookies
   .then(deleteCookiesPromise)
-  .then(getOpenTabs)
+  .then(() => getOpenTabs(undefined, db))
   .then(openTabs => {
     openTabs.slice(0,5).forEach(tab => {
       document.body.innerHTML += tab + '\n<br />';

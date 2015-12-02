@@ -18,7 +18,8 @@ let db = {
   // static data? updated once, at installation
   //userShare: 'tomasn@salsitasoft.com',
 
-  clientName: 'Kitt',
+  // clientName: 'Kitt',
+
   // this tag distinguishes every browser, session. For kitt, let's keep this one
   sessionTag: "session_sync123-456789",
 
@@ -37,5 +38,27 @@ let db = {
   syncEntities: {}
 };
 
+function browserDb(clientName) {
+  db.clientName = clientName;
+  db.getUserShare = () =>
+    new Promise((resolve, reject) =>
+      chrome.storage.local.get('userShare', (items) => resolve(items.userShare)));
 
-module.exports = db;
+  db.setUserShare = (userShare) =>
+    new Promise((resolve, reject) => chrome.storage.local.set({'userShare': userShare}, resolve));
+
+  return db;
+}
+
+function nodeDb(clientName, userShare) {
+  db.clientName = clientName;
+  db.setUserShare = () => Promise.resolve(userShare);
+  db.getUserShare = () => Promise.resolve(userShare);
+
+  return db;
+}
+
+module.exports = {
+  browserDb,
+  nodeDb
+};

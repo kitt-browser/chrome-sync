@@ -1,6 +1,5 @@
 'use strict';
 let clientToServerRequest = require('./clientToServerRequest');
-let db = require('./db');
 
 let my_entry; // debug TODO
 
@@ -71,22 +70,25 @@ function parseOpenTabs(ClientToServerResponseItem) {
   return openTabs;
 }
 
-function getOpenTabs(accessToken) {
+function getOpenTabs(accessToken, db) {
   return clientToServerRequest.sendRequest(accessToken, BuildGetUpdatesRequest(db), db)
     .then(parseOpenTabs)
     .catch(error => console.error(error));
 }
 
 
-function updateSyncEntities(ctsResponse) {
+function updateSyncEntities(ctsResponse, db) {
   let entries = ctsResponse.get_updates.entries;
   entries.forEach(entry => db.syncEntities[entry.id_string] = entry);
   return ctsResponse;
 }
 
-function getUpdates(accessToken) {
+function getUpdates(accessToken, db) {
   return clientToServerRequest.sendRequest(accessToken, BuildGetUpdatesRequest(db), db)
-    .then(updateSyncEntities);
+    .then(response => updateSyncEntities(response, db));
 }
 
-module.exports = {getOpenTabs, getUpdates};
+module.exports = {
+  getOpenTabs,
+  getUpdates
+};
