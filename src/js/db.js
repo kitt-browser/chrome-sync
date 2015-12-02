@@ -7,8 +7,16 @@ let progressMarkers = [];
 
 
 let db = {
-  // static data? updated once, at instalation
-  userShare: 'tomasn@salsitasoft.com',
+  // getData -> userShare + sessionTag
+  getUserShare: () =>
+    new Promise((resolve, reject) =>
+      chrome.storage.local.get('userShare', (items) => resolve(items.userShare))),
+
+  setUserShare: (userShare) =>
+    new Promise((resolve, reject) => chrome.storage.local.set({'userShare': userShare}, resolve)),
+
+  // static data? updated once, at installation
+  //userShare: 'tomasn@salsitasoft.com',
 
   clientName: 'Kitt',
   // this tag distinguishes every browser, session. For kitt, let's keep this one

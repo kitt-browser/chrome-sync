@@ -1,8 +1,9 @@
 let querystring = require('querystring');
 let config = require('./config');
 let url = config.syncServerEndpoint;
-
+let db = require('./db');
 let getOpenTabs = require('./syncGetter').getOpenTabs;
+
 
 function authentificate() {
   let url = 'https://accounts.google.com/o/oauth2/auth' + '?' + querystring.stringify({
@@ -23,7 +24,7 @@ function getAllCookiesPromise(obj) {
 }
 
 function deleteCookiesPromise(cookiesToDelete) {
-  console.log('I should delete folloowign cookies' + cookiesToDelete);
+  console.log('I should delete following cookies' + cookiesToDelete);
 
   let promisesPerCookie = cookiesToDelete.map( cookie =>
     new Promise((resolve, reject) => chrome.cookies.remove({url: url, name: cookie.name}, resolve))
@@ -69,8 +70,24 @@ function main() {
     if (!items.tokens) {
       authentificate();
     } else {
-      document.body.innerHTML = JSON.stringify(items);
-      printOpenTabs();
+      db.getUserShare().then(userShare => {
+        if (!userShare) {
+          document.body.innerHTML = `<form id='userShareForm'>
+            Please input the email account under which you registered sync.
+            <input type=email id='email' placeholder='email' />
+            <input type=submit />
+          </form>`;
+          document.getElementById('userShareForm').onsubmit = (e) => {
+            e.preventDefault();
+            let email = document.getElementById('email').value;
+            db.setUserShare(email);
+            window.close();
+          };
+        } else { // finally, everything is set up
+          document.body.innerHTML += JSON.stringify(items);
+          printOpenTabs();
+        }
+      });
     }
   });
 }

@@ -15,16 +15,20 @@ let root = require("protobufjs").loadProto(require('./sync.proto')).build('sync_
 
 
 function fillRequestFromDb(clientToServerMessage, db) {
-  clientToServerMessage.share = db.userShare;
+  return db.getUserShare().then(userShare => {
+    console.log('!!!!>>>', userShare);
+    clientToServerMessage.share = userShare;
 
     let syncState = db.syncState;
-  if(syncState.server_chips) {
-    clientToServerMessage.bag_of_chips = new root.ChipBag({'server_chips': syncState.server_chips});
-  }
+    if(syncState.server_chips) {
+      clientToServerMessage.bag_of_chips = new root.ChipBag({'server_chips': syncState.server_chips});
+    }
 
-  if(syncState.store_birthday) {
-    clientToServerMessage.store_birthday = syncState.store_birthday;
-  }
+    if(syncState.store_birthday) {
+      clientToServerMessage.store_birthday = syncState.store_birthday;
+    }
+    return clientToServerMessage;
+  });
 }
 
 function baseSendRequest(accessToken, body) {
@@ -118,12 +122,12 @@ function _jsonStringify(json) {
  * @constructor
  */
 function sendRequest(accessToken, request, db) {
-  return getAccessTokenPromise(accessToken)
-    .then(accessToken => {
-      fillRequestFromDb(request, db);
+  return fillRequestFromDb(request, db)
+    .then(request => {
       console.error(_jsonStringify(request.toRaw(true, true)));
       let req = new Uint8Array(request.toArrayBuffer());
-      return baseSendRequest(accessToken, req)
+      return getAccessTokenPromise(accessToken)
+        .then(accessToken => baseSendRequest(accessToken, req));
     })
     .then(response => root.ClientToServerResponse.decode(response))
     .then(d => {
