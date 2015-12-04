@@ -1,7 +1,8 @@
 'use strict';
+
+let _ = require('lodash');
 let clientToServerRequest = require('./clientToServerRequest');
 
-let my_entry; // debug TODO
 
 function InitializeMarker(datatype, db) {
   var marker = db.getProgressMarker(datatype.data_type_id);
@@ -51,6 +52,7 @@ function parseOpenTabs(ClientToServerResponseItem) {
   let entries = ClientToServerResponseItem.get_updates.entries;
 
   entries.forEach( (entry, key) => {
+    let my_entry; // debug TODO
     let tab =  entry.specifics.session.tab;
     if (tab) {
       if (key == entries.length - 2) { // todo
@@ -79,7 +81,11 @@ function getOpenTabs(accessToken, db) {
 
 function updateSyncEntities(ctsResponse, db) {
   let entries = ctsResponse.get_updates.entries;
-  entries.forEach(entry => db.syncEntities[entry.id_string] = entry);
+  entries.forEach(entry => {
+    //if (_.get(entry, 'specifics.session.session_tag') === db.sessionTag) {
+      db.syncEntities[entry.id_string] = entry;
+    //}
+  });
   return ctsResponse;
 }
 

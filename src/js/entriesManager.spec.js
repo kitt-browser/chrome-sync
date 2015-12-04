@@ -70,6 +70,28 @@ let db_mock = {
           }
         }
       }
+    },
+    "Z:ADqtAZy7SBx3aAw4bMqMmgyPux9TG1JJ987uhKdvtU1wFUUoZbTIsWnmLXKHils2naYxig4WvsRZ7ZMvC1eHc5texHwOTNJrLg==": {
+      "id_string": "Z:ADqtAZy7SBx3aAw4bMqMmgyPux9TG1JJ987uhKdvtU1wFUUoZbTIsWnmLXKHils2naYxig4WvsRZ7ZMvC1eHc5texHwOTNJrLg==",
+      "parent_id_string": "0",
+      "version": {
+        "low": -1110076096,
+        "high": 337425
+      },
+      "name": "Sessions",
+      "non_unique_name": "Sessions",
+      "sync_timestamp": {
+        "low": -1110076096,
+        "high": 337425
+      },
+      "server_defined_unique_tag": "google_chrome_sessions",
+      "specifics": {
+        "session": {
+          "tab_node_id": -1
+        }
+      },
+      "folder": true,
+      "attachment_id": []
     }
   }
 };
@@ -98,5 +120,9 @@ describe('module for finding entities in the database', function() {
   it('should find the appropriate header', function() {
     let header = entriesManager.findHeader();
     assert.deepEqual(header.id_string, 'id_string_of_a_header');
+  });
+
+  it('should find root id_string', () => {
+    assert.equal(entriesManager.findRootIdString(), 'Z:ADqtAZy7SBx3aAw4bMqMmgyPux9TG1JJ987uhKdvtU1wFUUoZbTIsWnmLXKHils2naYxig4WvsRZ7ZMvC1eHc5texHwOTNJrLg==');
   });
 });

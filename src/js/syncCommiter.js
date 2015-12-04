@@ -15,6 +15,8 @@ function _jsonStringify(json) {
   }, '  ')
 }
 function _createSyncEntity(db, specifics) {
+  let entriesManager = entriesManagerFactory(db);
+
   //let currentTime = Date.now() * 1000;
 
   // in format "rand271398.372016847131440062545931"
@@ -22,6 +24,7 @@ function _createSyncEntity(db, specifics) {
 
   return {
     id_string: 'Z:'+ randomString,
+    parent_id_string: entriesManager.findRootIdString(),
     version: 0,
     name: db.clientName,
     position_in_parent: 0,
@@ -68,6 +71,10 @@ function _appendRecordsToHeader(header, tabId, windowId) {
     window.tab.push(tabId);
     window.selected_tab_index = window.tab.length - 1;
   }
+
+  //BUGFIX: in response I get some weird data structure although I should only get bytes...
+  // not needed anyway
+  delete header.ordinal_in_parent;
 
   return header;
 }
@@ -175,6 +182,8 @@ module.exports = {
 
   _createTab,
   _appendNavigationToTab,
+
+  _buildCommitRequest, // testing only
 
   wipeSessionEntries,
   createEntriesForAddedNavigation,

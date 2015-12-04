@@ -39,6 +39,11 @@ module.exports = (db) =>{
         }
       });
       return items;
+    },
+
+    findRootIdString() {
+      let rootNode = _.find(entries, {parent_id_string: "0"});
+      return rootNode.id_string;
     }
   }
 };
