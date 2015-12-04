@@ -27,7 +27,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse();
       });
       break;
+
+    case 'visitedWebsite':
+      let info = {
+        tabId: sender.tab.id,
+        windowId: sender.tab.windowId,
+        navigation: {
+          url: sender.tab.url,
+          title: sender.tab.title
+        }
+      };
+
+      //alert(JSON.stringify(info, null, ' '));
+
+      sendResponse();
+      break;
   }
+
+
 });
 
 function updateStoredAccessToken(newAccessToken) {

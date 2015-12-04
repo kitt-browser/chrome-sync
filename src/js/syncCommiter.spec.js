@@ -186,7 +186,6 @@ describe('module for creating and modifying HEADER sync entities(_createHeader, 
     assert.deepEqual(headerEntry, {
       "parent_id_string": "Z:ADqtAZy7SBx3aAw4bMqMmgyPux9TG1JJ987uhKdvtU1wFUUoZbTIsWnmLXKHils2naYxig4WvsRZ7ZMvC1eHc5texHwOTNJrLg==",
       "version": 0,
-      "ordinal_in_parent": null,
       "name": "Kitt",
       "position_in_parent": 0,
       "specifics": {
@@ -220,7 +219,6 @@ describe('module for creating and modifying HEADER sync entities(_createHeader, 
 
     assert.deepEqual(headerEntry, {
       "parent_id_string": "Z:ADqtAZy7SBx3aAw4bMqMmgyPux9TG1JJ987uhKdvtU1wFUUoZbTIsWnmLXKHils2naYxig4WvsRZ7ZMvC1eHc5texHwOTNJrLg==",
-      "ordinal_in_parent": null,
       "version": 0,
       "name": "Kitt",
       "position_in_parent": 0,
@@ -259,7 +257,6 @@ describe('module for creating and modifying HEADER sync entities(_createHeader, 
     assert.deepEqual(headerEntry, {
       "parent_id_string": "Z:ADqtAZy7SBx3aAw4bMqMmgyPux9TG1JJ987uhKdvtU1wFUUoZbTIsWnmLXKHils2naYxig4WvsRZ7ZMvC1eHc5texHwOTNJrLg==",
       "version": 0,
-      "ordinal_in_parent": null,
       "name": "Kitt",
       "position_in_parent": 0,
       "specifics": {

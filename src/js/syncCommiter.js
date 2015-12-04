@@ -12,8 +12,9 @@ function _jsonStringify(json) {
       return;
     return v;
 
-  }, '  ')
+  }, '  ');
 }
+
 function _createSyncEntity(db, specifics) {
   let entriesManager = entriesManagerFactory(db);
 
@@ -35,7 +36,6 @@ function _createSyncEntity(db, specifics) {
     specifics: specifics
   };
 }
-
 
 // ------------------- header sync entities
 function _createHeaderSpecifics(db) {
@@ -78,6 +78,7 @@ function _appendRecordsToHeader(header, tabId, windowId) {
 
   return header;
 }
+
 function _createHeader(db) {
   return _createSyncEntity(db, _createHeaderSpecifics(db));
 }
@@ -92,7 +93,7 @@ function _createTabSpecifics(db, tabId, windowId) {
         tab_id: tabId,
         window_id: windowId,
         tab_visual_index: 0,
-        current_navigation_index: 0, // invalid, will be incremented along with navigation
+        current_navigation_index: 0, // invalid initial value, will be incremented along with navigation
         navigation: []
       }
     }
@@ -102,8 +103,6 @@ function _createTabSpecifics(db, tabId, windowId) {
 function _createTab(db, tabId, windowId) {
   return _createSyncEntity(db, _createTabSpecifics(db, tabId, windowId));
 }
-
-
 
 function _appendNavigationToTab(entry, navigation) {
   navigation = {
@@ -124,20 +123,15 @@ function createEntriesForAddedNavigation(db, tabId, windowId, navigation) {
   let needsToUpdateHeader = false;
   if (!tab) { // no such tab exists. Create the tab + add record to the header for the tab
     needsToUpdateHeader = true;
-    console.error('creatING new tab');
     tab = _createTab(db, tabId, windowId);
-    console.error('created new tab');
   }
   tab = _appendNavigationToTab(tab, navigation);
-  console.error('navigation to tab appended');
 
   let header = _.cloneDeep(entriesManager.findHeader());
   if (!header) {
     header = _createHeader(db);
-    console.error('created header');
   }
   header = _appendRecordsToHeader(header, tabId, windowId);
-  console.error('appended records to header');
 
   return needsToUpdateHeader? [header, tab] : [tab];
 }
@@ -151,11 +145,9 @@ function wipeSessionEntries(db) {
 
 // TODO: the sync commiter real part. The rest is somehting like: entry creator, modifyier
 function _buildCommitRequest(entries) {
-  //console.log('----current time:', currentTime);
   let request = new clientToServerRequest.rootProto.ClientToServerMessage({
     message_contents: 'COMMIT',
     commit: {
-      //cache_guid: 'random_string',
       config_params: {
         enabled_type_ids: [50119],
         tabs_datatype_enabled: true
@@ -169,10 +161,7 @@ function _buildCommitRequest(entries) {
 
 function commitEntry(accessToken, db, entryEntries) {
   let entries = _.isArray(entryEntries)? entryEntries : [entryEntries];
-  console.error('building commit request with entries');
-  console.error(_jsonStringify(entries));
   let request = _buildCommitRequest(entries);
-  console.error('console request sucessfully built! gonna send it');
   return clientToServerRequest.sendRequest(accessToken, request, db);
 }
 
