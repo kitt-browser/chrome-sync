@@ -135,6 +135,13 @@ function createEntriesForAddedNavigation(db, tabId, windowId, navigation) {
   return needsToUpdateHeader? [header, tab] : [tab];
 }
 
+function wipeSessionEntries(db) {
+  let entriesManager = entriesManagerFactory(db);
+
+  let sessionEntries = entriesManager.findItemsInSession();
+  return _.map(sessionEntries, entry => {entry.deleted = true; return entry;});
+}
+
 // TODO: the sync commiter real part. The rest is somehting like: entry creator, modifyier
 function _buildCommitRequest(entries) {
   //console.log('----current time:', currentTime);
@@ -169,6 +176,7 @@ module.exports = {
   _createTab,
   _appendNavigationToTab,
 
+  wipeSessionEntries,
   createEntriesForAddedNavigation,
   commitEntry
 };

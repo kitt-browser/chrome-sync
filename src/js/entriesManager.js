@@ -29,6 +29,16 @@ module.exports = (db) =>{
           }
         }
       });
+    },
+
+    findItemsInSession() {
+      let items = [];
+      _.forEach(entries, entry => {
+        if (_.get(entry, 'specifics.session.session_tag') === db.sessionTag) {
+          items.push(entry);
+        }
+      });
+      return items;
     }
   }
 };
