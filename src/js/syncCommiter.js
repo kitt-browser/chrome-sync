@@ -4,6 +4,16 @@ let _ = require('lodash');
 let clientToServerRequest = require('./clientToServerRequest');
 let entriesManagerFactory = require('./entriesManager');
 
+function _jsonStringify(json) {
+  return JSON.stringify(json, (k, v) => {
+    if (k=== 'data')
+      return 'LONGDATA';
+    if(v===null || v===false)
+      return;
+    return v;
+
+  }, '  ')
+}
 function _createSyncEntity(db, specifics) {
   //let currentTime = Date.now() * 1000;
 
@@ -107,15 +117,20 @@ function createEntriesForAddedNavigation(db, tabId, windowId, navigation) {
   let needsToUpdateHeader = false;
   if (!tab) { // no such tab exists. Create the tab + add record to the header for the tab
     needsToUpdateHeader = true;
+    console.error('creatING new tab');
     tab = _createTab(db, tabId, windowId);
+    console.error('created new tab');
   }
   tab = _appendNavigationToTab(tab, navigation);
+  console.error('navigation to tab appended');
 
   let header = _.cloneDeep(entriesManager.findHeader());
   if (!header) {
     header = _createHeader(db);
+    console.error('created header');
   }
   header = _appendRecordsToHeader(header, tabId, windowId);
+  console.error('appended records to header');
 
   return needsToUpdateHeader? [header, tab] : [tab];
 }
@@ -140,7 +155,11 @@ function _buildCommitRequest(entries) {
 
 function commitEntry(accessToken, db, entryEntries) {
   let entries = _.isArray(entryEntries)? entryEntries : [entryEntries];
-  return clientToServerRequest.sendRequest(accessToken, _buildCommitRequest(entries), db);
+  console.error('building commit request with entries');
+  console.error(_jsonStringify(entries));
+  let request = _buildCommitRequest(entries);
+  console.error('console request sucessfully built! gonna send it');
+  return clientToServerRequest.sendRequest(accessToken, request, db);
 }
 
 module.exports = {

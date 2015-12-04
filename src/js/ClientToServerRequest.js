@@ -123,6 +123,7 @@ function _jsonStringify(json) {
 function sendRequest(accessToken, request, db) {
   return fillRequestFromDb(request, db)
     .then(request => {
+      console.error('sendRequest request');
       console.error(_jsonStringify(request.toRaw(true, true)));
       let req = new Uint8Array(request.toArrayBuffer());
       return getAccessTokenPromise(accessToken)
