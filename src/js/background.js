@@ -23,8 +23,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch(message.type) {
     case 'setAuthorizationCode':
       getAPITokens(message.code, tokens => {
-        chrome.storage.local.set({ tokens: tokens });
-        sendResponse();
+        chrome.storage.local.set({ tokens: tokens }, sendResponse);
       });
       break;
 
@@ -80,8 +79,21 @@ function refreshAccessToken() {
 refreshAccessToken();
 
 
-//chrome.webRequest.onBeforeSendHeaders.addListener(
-//  function(details) { console.log(details.url); },
-//  { urls: ['<all_urls>'], types: ['xmlhttprequest']},
-//  ['requestHeaders', 'blocking']
-//);
+// TODO test it!
+chrome.webRequest.onBeforeSendHeaders.addListener((details) => {
+    if(details.url.indexOf('?cookietest') !== -1) {
+      for (let i = 0; i< details.requestHeaders.length; ++i) {
+        if (details.requestHeaders[i].name === 'Cookie') {
+          details.requestHeaders.splice(i, 1);
+          break;
+        }
+      }
+    }
+
+    console.log('after', details);
+
+    return {requestHeaders: details.requestHeaders};
+  },
+  { urls: ["*://www.novellizator.cz/*"]}, // TODO: config.syncServerEndpoint
+  ['requestHeaders', 'blocking']
+);
