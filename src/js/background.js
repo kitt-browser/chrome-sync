@@ -34,17 +34,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         windowId: sender.tab.windowId,
         navigation: {
           url: sender.tab.url,
-          title: sender.tab.title
+          title: sender.tab.title || 'Default title'
         }
       };
 
-      //alert(JSON.stringify(info, null, ' '));
+      let res = JSON.stringify(info, null, ' ');
 
-      sendResponse();
+      console.log(res);
+      sendResponse(info);
       break;
   }
 
-
+  return true;
 });
 
 function updateStoredAccessToken(newAccessToken) {
@@ -56,38 +57,28 @@ function updateStoredAccessToken(newAccessToken) {
 
 function refreshAccessToken() {
   chrome.storage.local.get('tokens', (res) => {
-    let tokens = res.tokens;
+    if (!res || !res.tokens) {
+      return;
+    }
+
     request.post({
       url: 'https://www.googleapis.com/oauth2/v3/token',
       form:{
         client_id: config.clientId,
         client_secret: config.clientSecret,
         grant_type: 'refresh_token',
-        refresh_token: tokens.refresh_token
+        refresh_token: res.tokens.refresh_token
       }
     }, (err, response, body) => {
-      let accessToken = JSON.parse(body).access_token;
-      updateStoredAccessToken(accessToken);
+      let parsedBody = JSON.parse(body);
+      updateStoredAccessToken(parsedBody.access_token);
+      setTimeout(refreshAccessToken, 1000 * parsedBody.expires_in);
     });
   });
 }
 
 refreshAccessToken();
-setInterval(refreshAccessToken, 1000* 3600);
 
-
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-//  console.log('tabId:', tabId);
-//  console.log('changeInfo:', changeInfo);
-//  console.log('tab:', tab);
-});
-
-
-
-// for debugging purposes only
-chrome.tabs.onActivated.addListener(activeInfo => {
-  console.log(`activated tab: tabId=${activeInfo.tabId}, windowId=${activeInfo.windowId}`);
-});
 
 //chrome.webRequest.onBeforeSendHeaders.addListener(
 //  function(details) { console.log(details.url); },
